@@ -2,12 +2,24 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './assets/stylesheets/style';
 import 'bootstrap-grid';
+import fontawesome from 'fontawesome-markers';
 
 let markers = [];
 
 function clearMarkers() {
   markers.forEach(marker => marker.setMap(null));
   markers = [];
+}
+
+const markerIcon = {
+  path: fontawesome.DOT_CIRCLE_O,
+  scale: 0.2,
+  strokeWeight: 0.2,
+  strokeColor: 'black',
+  strokeOpacity: 1,
+  fillColor: 'red',
+  fillOpacity: 1,
+  anchor: new google.maps.Point(22, -12),
 }
 
 class GoogleMap extends React.Component {
@@ -31,7 +43,11 @@ class GoogleMap extends React.Component {
     const { markerLocations, map } = this.state;
 
     clearMarkers();
-    markers = markerLocations.map(location => new google.maps.Marker({position: location, map }));
+    markers = markerLocations.map(location => new google.maps.Marker({
+      position: location,
+      map,
+      icon: markerIcon,
+    }));
   }
   render() {
     return (

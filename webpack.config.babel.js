@@ -17,10 +17,11 @@ module.exports = {
       },
       { test: /\.css$/, loader: 'style!css' },
       { test: /\.scss$/, loader: 'style!css!sass' },
+      { test: /\.json$/, loader: 'json' },
     ],
   },
   resolve: {
-    extensions: ['', '.js', '.jsx', '.css', '.scss'],
+    extensions: ['', '.js', '.jsx', '.css', '.scss', 'json'],
   },
   plugins: [
     new HtmlWebpackPlugin({
