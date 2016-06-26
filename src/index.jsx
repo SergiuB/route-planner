@@ -7,7 +7,10 @@ import fontawesome from 'fontawesome-markers';
 let markers = [];
 
 function clearMarkers() {
-  markers.forEach(marker => marker.setMap(null));
+  markers.forEach(marker => {
+    google.maps.event.clearInstanceListeners(marker);
+    marker.setMap(null)
+  });
   markers = [];
 }
 
@@ -37,17 +40,38 @@ class GoogleMap extends React.Component {
       const markerLocations = [e.latLng, ...this.state.markerLocations];
       this.setState({ markerLocations });
     });
+    map.addListener('dblclick', e => {
+      const markerLocations = [e.latLng, ...this.state.markerLocations];
+      this.setState({ markerLocations });
+    });
     this.setState({ map });
   }
   componentDidUpdate() {
     const { markerLocations, map } = this.state;
 
     clearMarkers();
-    markers = markerLocations.map(location => new google.maps.Marker({
-      position: location,
-      map,
-      icon: markerIcon,
-    }));
+    markers = markerLocations.map(location => {
+      const marker = new google.maps.Marker({
+        position: location,
+        map,
+        icon: markerIcon,
+      });
+      marker.addListener('dblclick', e => {
+        for (const other of markers) {
+          if (e.latLng.equals(other.getPosition())) {
+            this.removeMarker(other);
+            break;
+          }
+        }
+      });
+      return marker;
+    });
+  }
+
+  removeMarker(marker) {
+    const { markerLocations, map } = this.state;
+    const newMarkerLocations = markerLocations.filter(ml => !ml.equals(marker.getPosition()));
+    this.setState({ markerLocations : newMarkerLocations })
   }
   render() {
     return (
