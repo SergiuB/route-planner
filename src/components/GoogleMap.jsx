@@ -24,9 +24,9 @@ const markerIcon = {
 
 export default class GoogleMap extends React.Component {
   componentDidMount() {
-    const { center, zoom, markerLocations, onMarkerAdded } = this.props;
+    const { center, zoom, markerLocations, onMapClick } = this.props;
     this.map = new google.maps.Map(this.mapEl, { center, zoom });
-    this.map.addListener('click', e => onMarkerAdded && onMarkerAdded(e.latLng));
+    this.map.addListener('click', e => onMapClick && onMapClick(e.latLng));
     this.createMarkers(markerLocations);
   }
 
@@ -47,16 +47,16 @@ export default class GoogleMap extends React.Component {
       icon: markerIcon,
     });
     const self = this;
-    marker.addListener('dblclick', function(e) {
+    marker.addListener('dblclick', function handler() {
       self.removeMarker(this);
     });
     return marker;
   }
 
   removeMarker(marker) {
-    const { onMarkerRemoved } = this.props;
-    if (onMarkerRemoved) {
-      onMarkerRemoved(marker.getPosition());
+    const { onMarkerDblClick } = this.props;
+    if (onMarkerDblClick) {
+      onMarkerDblClick(marker.getPosition());
     }
   }
   render() {
@@ -69,8 +69,8 @@ export default class GoogleMap extends React.Component {
 GoogleMap.propTypes = {
   center: React.PropTypes.object,
   zoom: React.PropTypes.number,
-  onMarkerAdded: React.PropTypes.func,
-  onMarkerRemoved: React.PropTypes.func,
+  onMapClick: React.PropTypes.func,
+  onMarkerDblClick: React.PropTypes.func,
   markerLocations: React.PropTypes.array,
 };
 

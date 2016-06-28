@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import GoogleMap from './GoogleMap';
 
 export default class RoutePlanner extends Component {
@@ -7,15 +7,17 @@ export default class RoutePlanner extends Component {
     this.state = {
       markerLocations: [],
     };
+    this.handleMapClick = this.handleMapClick.bind(this);
+    this.handleMarkerDblClick = this.handleMarkerDblClick.bind(this);
   }
 
-  handleMarkerAdded(location) {
+  handleMapClick(location) {
     const { markerLocations } = this.state;
     const newMarkerLocations = [location, ...markerLocations];
     this.setState({ markerLocations: newMarkerLocations });
   }
 
-  handleMarkerRemoved(location) {
+  handleMarkerDblClick(location) {
     const { markerLocations } = this.state;
     const newMarkerLocations = markerLocations.filter(ml => !ml.equals(location));
     this.setState({ markerLocations: newMarkerLocations });
@@ -27,8 +29,8 @@ export default class RoutePlanner extends Component {
       <div>
         <GoogleMap
           markerLocations={markerLocations}
-          onMarkerAdded={this.handleMarkerAdded.bind(this)}
-          onMarkerRemoved={this.handleMarkerRemoved.bind(this)}
+          onMapClick={this.handleMapClick}
+          onMarkerDblClick={this.handleMarkerDblClick}
         />
       </div>
     );
