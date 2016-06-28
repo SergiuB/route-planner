@@ -23,6 +23,7 @@ const markerIcon = {
 };
 
 export default class GoogleMap extends React.Component {
+
   componentDidMount() {
     const { center, zoom, markerLocations, onMapClick } = this.props;
     this.map = new google.maps.Map(this.mapEl, { center, zoom });
@@ -61,7 +62,7 @@ export default class GoogleMap extends React.Component {
   }
   render() {
     return (
-      <div className="map col-lg-6" ref={mapEl => { this.mapEl = mapEl; }}></div>
+      <div className="map" ref={mapEl => { this.mapEl = mapEl; }}></div>
     );
   }
 }

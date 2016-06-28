@@ -42,6 +42,7 @@
   },
   "dependencies": {
     "bootstrap-grid": "^2.0.1",
-    "fontawesome-markers": "^4.6.1"
+    "fontawesome-markers": "^4.6.1",
+    "material-ui": "^0.15.1"
   }
 }
