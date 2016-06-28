@@ -46,13 +46,9 @@ export default class GoogleMap extends React.Component {
       map: this.map,
       icon: markerIcon,
     });
-    marker.addListener('dblclick', e => {
-      for (const other of markers) {
-        if (e.latLng.equals(other.getPosition())) {
-          this.removeMarker(other);
-          break;
-        }
-      }
+    const self = this;
+    marker.addListener('dblclick', function(e) {
+      self.removeMarker(this);
     });
     return marker;
   }
