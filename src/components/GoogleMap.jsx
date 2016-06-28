@@ -23,31 +23,21 @@ const markerIcon = {
 };
 
 export default class GoogleMap extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      markerLocations: [],
-      map: null,
-    };
-  }
   componentDidMount() {
-    const { center, zoom } = this.props;
-    const map = new google.maps.Map(this.mapEl, { center, zoom });
-    map.addListener('click', e => {
-      const markerLocations = [e.latLng, ...this.state.markerLocations];
-      this.setState({ markerLocations });
-    });
-    map.addListener('dblclick', e => {
-      const markerLocations = [e.latLng, ...this.state.markerLocations];
-      this.setState({ markerLocations });
-    });
-    this.map = map;
+    const { center, zoom, markerLocations, onMarkerAdded } = this.props;
+    this.map = new google.maps.Map(this.mapEl, { center, zoom });
+    this.map.addListener('click', e => onMarkerAdded && onMarkerAdded(e.latLng));
+    this.createMarkers(markerLocations);
   }
-  componentDidUpdate() {
-    const { markerLocations } = this.state;
 
+  componentWillReceiveProps(nextProps) {
+    const { markerLocations } = nextProps;
+    this.createMarkers(markerLocations);
+  }
+
+  createMarkers(locations) {
     clearMarkers();
-    markers = markerLocations.map(this.createMarker.bind(this));
+    markers = locations.map(this.createMarker.bind(this));
   }
 
   createMarker(location) {
@@ -68,9 +58,10 @@ export default class GoogleMap extends React.Component {
   }
 
   removeMarker(marker) {
-    const { markerLocations } = this.state;
-    const newMarkerLocations = markerLocations.filter(ml => !ml.equals(marker.getPosition()));
-    this.setState({ markerLocations: newMarkerLocations });
+    const { onMarkerRemoved } = this.props;
+    if (onMarkerRemoved) {
+      onMarkerRemoved(marker.getPosition());
+    }
   }
   render() {
     return (
@@ -82,6 +73,9 @@ export default class GoogleMap extends React.Component {
 GoogleMap.propTypes = {
   center: React.PropTypes.object,
   zoom: React.PropTypes.number,
+  onMarkerAdded: React.PropTypes.func,
+  onMarkerRemoved: React.PropTypes.func,
+  markerLocations: React.PropTypes.array,
 };
 
 GoogleMap.defaultProps = {

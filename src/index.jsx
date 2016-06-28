@@ -3,9 +3,9 @@ import ReactDOM from 'react-dom';
 import 'bootstrap-grid';
 
 import './assets/stylesheets/style';
-import GoogleMap from './components/GoogleMap';
+import RoutePlanner from './components/RoutePlanner';
 
 ReactDOM.render(
-  <GoogleMap />,
+  <RoutePlanner />,
   document.getElementById('app')
 );
