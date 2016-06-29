@@ -16,17 +16,17 @@ export default class RoutePlanner extends Component {
     this.state = {
       markerLocations: [],
     };
-    this.handleMapClick = this.handleMapClick.bind(this);
-    this.handleMarkerDblClick = this.handleMarkerDblClick.bind(this);
+    this.addMarker = this.addMarker.bind(this);
+    this.removeMarker = this.removeMarker.bind(this);
   }
 
-  handleMapClick(location) {
+  addMarker(location) {
     const { markerLocations } = this.state;
     const newMarkerLocations = [location, ...markerLocations];
     this.setState({ markerLocations: newMarkerLocations });
   }
 
-  handleMarkerDblClick(location) {
+  removeMarker(location) {
     const { markerLocations } = this.state;
     const newMarkerLocations = markerLocations.filter(ml => !ml.equals(location));
     this.setState({ markerLocations: newMarkerLocations });
@@ -39,18 +39,19 @@ export default class RoutePlanner extends Component {
         <div className="col-lg-6">
           <GoogleMap
             markerLocations={markerLocations}
-            onMapClick={this.handleMapClick}
-            onMarkerDblClick={this.handleMarkerDblClick}
+            onMapClick={this.addMarker}
+            onMarkerDblClick={this.removeMarker}
           />
         </div>
         <div className="col-lg-4">
           {markerLocations.map(location => (
-            <div className="marker-location">
+            <div className="marker-location" key={location}>
               <TextField
+                id={`tf-${location}`}
                 value={location}
                 fullWidth
               />
-              <IconButton touch>
+              <IconButton touch onClick={() => this.removeMarker(location)}>
                 <FontIcon className="material-icons" color={red500}>clear</FontIcon>
               </IconButton>
             </div>
