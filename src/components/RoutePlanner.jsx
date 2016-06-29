@@ -3,11 +3,9 @@ import TextField from 'material-ui/TextField';
 
 import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
-import {red500, yellow500, blue500} from 'material-ui/styles/colors';
+import { red500 } from 'material-ui/styles/colors';
 
 import GoogleMap from './GoogleMap';
-
-
 
 export default class RoutePlanner extends Component {
 
