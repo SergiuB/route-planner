@@ -49,6 +49,7 @@
     "geolib": "^2.0.21",
     "googlemaps": "^1.6.0",
     "material-ui": "^0.15.1",
+    "node-uuid": "^1.4.7",
     "polyline": "^0.2.0",
     "qs": "^6.2.0",
     "whatwg-fetch": "^1.0.0"

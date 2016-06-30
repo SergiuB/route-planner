@@ -27,16 +27,16 @@ export default class GoogleMap extends React.Component {
   }
 
   componentDidMount() {
-    const { center, zoom, markerLocations, onMapClick } = this.props;
+    const { center, zoom, markerList, onMapClick } = this.props;
     this.map = new google.maps.Map(this.mapEl, { center, zoom });
     this.map.addListener('click', e => onMapClick && onMapClick(e.latLng));
-    this.createMarkers(markerLocations);
+    this.createMarkers(markerList);
   }
 
   componentWillReceiveProps(nextProps) {
-    const { markerLocations, pathPoints } = nextProps;
+    const { markerList, pathPoints } = nextProps;
     this.clearMarkers();
-    this.createMarkers(markerLocations);
+    this.createMarkers(markerList);
     this.removePolyline();
     this.createPolyline(pathPoints);
   }
@@ -59,8 +59,8 @@ export default class GoogleMap extends React.Component {
     }
   }
 
-  createMarkers(locations) {
-    this.markers = locations.map(this.createMarker.bind(this));
+  createMarkers(markerList) {
+    this.markers = markerList.map(this.createMarker.bind(this));
   }
 
   clearMarkers() {
@@ -71,12 +71,13 @@ export default class GoogleMap extends React.Component {
     this.markers = [];
   }
 
-  createMarker(position) {
+  createMarker({ id, location }) {
     const marker = new google.maps.Marker({
-      position,
+      position: location,
       map: this.map,
       icon: markerIcon,
     });
+    marker.metadata = { id };
     const self = this;
     marker.addListener('dblclick', function handler() {
       self.removeMarker(this);
@@ -87,7 +88,7 @@ export default class GoogleMap extends React.Component {
   removeMarker(marker) {
     const { onMarkerDblClick } = this.props;
     if (onMarkerDblClick) {
-      onMarkerDblClick(marker.getPosition());
+      onMarkerDblClick(marker.metadata.id);
     }
   }
   render() {
@@ -102,7 +103,7 @@ GoogleMap.propTypes = {
   zoom: React.PropTypes.number,
   onMapClick: React.PropTypes.func,
   onMarkerDblClick: React.PropTypes.func,
-  markerLocations: React.PropTypes.array,
+  markerList: React.PropTypes.array,
   pathPoints: React.PropTypes.array,
 };
 
