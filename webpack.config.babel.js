@@ -2,7 +2,7 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 
 module.exports = {
   context: `${__dirname}/src`,
-  entry: ['babel-polyfill', './index.jsx'],
+  entry: ['whatwg-fetch', 'babel-polyfill', './index.jsx'],
   output: {
     path: `${__dirname}/dist`,
     filename: 'bundle.js',
@@ -13,7 +13,7 @@ module.exports = {
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
-        loaders: ["react-hot", "babel-loader"],
+        loaders: ['react-hot', 'babel-loader'],
       },
       { test: /\.css$/, loader: 'style!css' },
       { test: /\.scss$/, loader: 'style!css!sass' },
@@ -29,4 +29,12 @@ module.exports = {
       inject: true,
     }),
   ],
+  devServer: {
+    proxy: {
+      '/api/*': {
+        target: 'http://localhost:3000',
+        secure: false,
+      },
+    },
+  },
 };

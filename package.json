@@ -18,7 +18,6 @@
     "babel-polyfill": "^6.9.1",
     "babel-preset-es2015": "^6.9.0",
     "babel-preset-react": "^6.5.0",
-    "babel-preset-react-hmre": "^1.1.1",
     "babel-register": "^6.9.0",
     "css-loader": "^0.23.1",
     "eslint": "^2.13.1",
@@ -43,8 +42,15 @@
     "webpack-dev-server": "^1.14.1"
   },
   "dependencies": {
+    "body-parser": "^1.15.2",
     "bootstrap-grid": "^2.0.1",
+    "express": "^4.14.0",
     "fontawesome-markers": "^4.6.1",
-    "material-ui": "^0.15.1"
+    "geolib": "^2.0.21",
+    "googlemaps": "^1.6.0",
+    "material-ui": "^0.15.1",
+    "polyline": "^0.2.0",
+    "qs": "^6.2.0",
+    "whatwg-fetch": "^1.0.0"
   }
 }

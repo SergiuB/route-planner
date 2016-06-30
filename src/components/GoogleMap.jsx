@@ -27,8 +27,18 @@ export default class GoogleMap extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { markerLocations } = nextProps;
+    const { markerLocations, pathPoints } = nextProps;
     this.createMarkers(markerLocations);
+    const path = pathPoints.map(([lat, lng]) => ({ lat, lng }));
+    const flightPath = new google.maps.Polyline({
+      path,
+      geodesic: true,
+      strokeColor: '#FF0000',
+      strokeOpacity: 1.0,
+      strokeWeight: 2,
+    });
+
+    flightPath.setMap(this.map);
   }
 
   componentWillUnmount() {
@@ -80,6 +90,7 @@ GoogleMap.propTypes = {
   onMapClick: React.PropTypes.func,
   onMarkerDblClick: React.PropTypes.func,
   markerLocations: React.PropTypes.array,
+  pathPoints: React.PropTypes.array,
 };
 
 GoogleMap.defaultProps = {
