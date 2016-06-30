@@ -28,25 +28,37 @@ export default class GoogleMap extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     const { markerLocations, pathPoints } = nextProps;
+    this.clearMarkers();
     this.createMarkers(markerLocations);
-    const path = pathPoints.map(([lat, lng]) => ({ lat, lng }));
-    const flightPath = new google.maps.Polyline({
-      path,
-      geodesic: true,
-      strokeColor: '#FF0000',
-      strokeOpacity: 1.0,
-      strokeWeight: 2,
-    });
-
-    flightPath.setMap(this.map);
+    this.removePolyline();
+    this.createPolyline(pathPoints);
   }
 
   componentWillUnmount() {
     this.clearMarkers();
   }
 
+  createPolyline(points) {
+    const path = points.map(([lat, lng]) => ({ lat, lng }));
+    this.polyline = new google.maps.Polyline({
+      path,
+      geodesic: true,
+      strokeColor: 'red',
+      strokeOpacity: 1.0,
+      strokeWeight: 2,
+    });
+
+    this.polyline.setMap(this.map);
+  }
+
+  removePolyline() {
+    if (this.polyline) {
+      this.polyline.setMap(null);
+      this.polyline = undefined;
+    }
+  }
+
   createMarkers(locations) {
-    this.clearMarkers();
     this.markers = locations.map(this.createMarker.bind(this));
   }
 
