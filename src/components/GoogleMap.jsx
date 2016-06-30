@@ -12,6 +12,13 @@ const markerIcon = {
   anchor: new google.maps.Point(22, -12),
 };
 
+const polylineStyle = {
+  geodesic: true,
+  strokeColor: 'red',
+  strokeOpacity: 1.0,
+  strokeWeight: 2,
+};
+
 export default class GoogleMap extends React.Component {
 
   constructor(props) {
@@ -36,18 +43,12 @@ export default class GoogleMap extends React.Component {
 
   componentWillUnmount() {
     this.clearMarkers();
+    this.removePolyline();
   }
 
   createPolyline(points) {
     const path = points.map(([lat, lng]) => ({ lat, lng }));
-    this.polyline = new google.maps.Polyline({
-      path,
-      geodesic: true,
-      strokeColor: 'red',
-      strokeOpacity: 1.0,
-      strokeWeight: 2,
-    });
-
+    this.polyline = new google.maps.Polyline(Object.assign({ path }, polylineStyle));
     this.polyline.setMap(this.map);
   }
 
@@ -63,16 +64,16 @@ export default class GoogleMap extends React.Component {
   }
 
   clearMarkers() {
-    this.markers.forEach(marker => {
+    for (const marker of this.markers) {
       google.maps.event.clearInstanceListeners(marker);
       marker.setMap(null);
-    });
+    }
     this.markers = [];
   }
 
-  createMarker(location) {
+  createMarker(position) {
     const marker = new google.maps.Marker({
-      position: location,
+      position,
       map: this.map,
       icon: markerIcon,
     });
