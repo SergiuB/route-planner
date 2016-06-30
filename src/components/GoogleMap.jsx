@@ -1,16 +1,6 @@
 import React from 'react';
 import fontawesome from 'fontawesome-markers';
 
-let markers = [];
-
-function clearMarkers() {
-  markers.forEach(marker => {
-    google.maps.event.clearInstanceListeners(marker);
-    marker.setMap(null);
-  });
-  markers = [];
-}
-
 const markerIcon = {
   path: fontawesome.DOT_CIRCLE_O,
   scale: 0.2,
@@ -24,6 +14,11 @@ const markerIcon = {
 
 export default class GoogleMap extends React.Component {
 
+  constructor(props) {
+    super(props);
+    this.markers = [];
+  }
+
   componentDidMount() {
     const { center, zoom, markerLocations, onMapClick } = this.props;
     this.map = new google.maps.Map(this.mapEl, { center, zoom });
@@ -36,13 +31,21 @@ export default class GoogleMap extends React.Component {
     this.createMarkers(markerLocations);
   }
 
-  componentDidUnmount() {
-    clearMarkers();
+  componentWillUnmount() {
+    this.clearMarkers();
   }
 
   createMarkers(locations) {
-    clearMarkers();
-    markers = locations.map(this.createMarker.bind(this));
+    this.clearMarkers();
+    this.markers = locations.map(this.createMarker.bind(this));
+  }
+
+  clearMarkers() {
+    this.markers.forEach(marker => {
+      google.maps.event.clearInstanceListeners(marker);
+      marker.setMap(null);
+    });
+    this.markers = [];
   }
 
   createMarker(location) {
