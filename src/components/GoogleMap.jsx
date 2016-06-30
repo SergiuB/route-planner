@@ -36,6 +36,10 @@ export default class GoogleMap extends React.Component {
     this.createMarkers(markerLocations);
   }
 
+  componentDidUnmount() {
+    clearMarkers();
+  }
+
   createMarkers(locations) {
     clearMarkers();
     markers = locations.map(this.createMarker.bind(this));

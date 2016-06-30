@@ -41,10 +41,13 @@ export default class RoutePlanner extends Component {
             onMarkerDblClick={this.removeMarker}
           />
         </div>
-        <div className="col-lg-4">
+        <div className="col-lg-3">
           {markerLocations.map(location => (
             <div className="marker-location" key={location}>
               <TextField
+                style={{
+                  fontSize: 12,
+                }}
                 id={`tf-${location}`}
                 value={location}
                 fullWidth
