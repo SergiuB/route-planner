@@ -5,7 +5,7 @@ import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
 import FlatButton from 'material-ui/FlatButton';
 import LinearProgress from 'material-ui/LinearProgress';
-import { red500 } from 'material-ui/styles/colors';
+import { red500, grey500 } from 'material-ui/styles/colors';
 import uuid from 'node-uuid';
 import _ from 'lodash';
 
@@ -65,7 +65,16 @@ export default class RoutePlanner extends Component {
         </div>
         <div className="col-lg-3">
           {_.values(markerList).map(({ id, location }) => (
-            <div className="marker-location" key={id}>
+            <div
+              className="marker-location"
+              key={id}
+            >
+              <FontIcon
+                className="drag-handle material-icons"
+                color={grey500}
+              >
+                drag_handle
+              </FontIcon>
               <TextField
                 style={{
                   fontSize: 12,
