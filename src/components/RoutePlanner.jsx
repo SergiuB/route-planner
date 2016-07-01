@@ -4,6 +4,7 @@ import TextField from 'material-ui/TextField';
 import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
 import FlatButton from 'material-ui/FlatButton';
+import LinearProgress from 'material-ui/LinearProgress';
 import { red500 } from 'material-ui/styles/colors';
 import uuid from 'node-uuid';
 import _ from 'lodash';
@@ -18,6 +19,7 @@ export default class RoutePlanner extends Component {
     this.state = {
       markerList: {},
       pathPoints: [],
+      showProgressBar: false,
     };
     this.addMarker = this.addMarker.bind(this);
     this.removeMarker = this.removeMarker.bind(this);
@@ -30,26 +32,26 @@ export default class RoutePlanner extends Component {
       ({ location }) => [location.lat(), location.lng()]
     );
     directionsApi.getDirections(points)
-      .then((result) => this.setState({ pathPoints: result }));
+      .then((result) => this.setState({ pathPoints: result, showProgressBar: false }));
   }
 
   addMarker(location) {
     const { markerList } = this.state;
     const id = uuid.v4();
     const newMarkerList = Object.assign({}, markerList, { [id]: { id, location } });
-    this.setState({ markerList: newMarkerList });
+    this.setState({ markerList: newMarkerList, showProgressBar: true });
     this.getPath();
   }
 
   removeMarker(id) {
     const { markerList } = this.state;
     const newMarkerList = _.omit(markerList, id);
-    this.setState({ markerList: newMarkerList });
+    this.setState({ markerList: newMarkerList, showProgressBar: true });
     this.getPath();
   }
 
   render() {
-    const { markerList, pathPoints } = this.state;
+    const { markerList, pathPoints, showProgressBar } = this.state;
     return (
       <div className="row">
         <div className="col-lg-6">
@@ -59,6 +61,7 @@ export default class RoutePlanner extends Component {
             onMapClick={this.addMarker}
             onMarkerDblClick={this.removeMarker}
           />
+        {showProgressBar && <LinearProgress mode="indeterminate" />}
         </div>
         <div className="col-lg-3">
           {_.values(markerList).map(({ id, location }) => (
