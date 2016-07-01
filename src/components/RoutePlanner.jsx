@@ -5,11 +5,11 @@ import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
 import FlatButton from 'material-ui/FlatButton';
 import { red500 } from 'material-ui/styles/colors';
-import qs from 'qs';
 import uuid from 'node-uuid';
 import _ from 'lodash';
 
 import GoogleMap from './GoogleMap';
+import * as directionsApi from '../api/directions';
 
 export default class RoutePlanner extends Component {
 
@@ -21,6 +21,16 @@ export default class RoutePlanner extends Component {
     };
     this.addMarker = this.addMarker.bind(this);
     this.removeMarker = this.removeMarker.bind(this);
+    this.getPath = _.debounce(this.getPath.bind(this), 1000);
+  }
+
+  getPath() {
+    const { markerList } = this.state;
+    const points = _.values(markerList).map(
+      ({ location }) => [location.lat(), location.lng()]
+    );
+    directionsApi.getDirections(points)
+      .then((result) => this.setState({ pathPoints: result }));
   }
 
   addMarker(location) {
@@ -28,12 +38,14 @@ export default class RoutePlanner extends Component {
     const id = uuid.v4();
     const newMarkerList = Object.assign({}, markerList, { [id]: { id, location } });
     this.setState({ markerList: newMarkerList });
+    this.getPath();
   }
 
   removeMarker(id) {
     const { markerList } = this.state;
     const newMarkerList = _.omit(markerList, id);
     this.setState({ markerList: newMarkerList });
+    this.getPath();
   }
 
   render() {
@@ -69,18 +81,7 @@ export default class RoutePlanner extends Component {
           <FlatButton
             label="Directions"
             primary
-            onClick={() => {
-              const query = qs.stringify(_.values(markerList).map(
-                ({ location }) => [location.lat(), location.lng()]
-              ));
-              fetch(`/api/directions?${query}`, {
-                headers: {
-                  Accept: 'application/json',
-                  'Content-Type': 'application/json',
-                },
-              }).then((response) => response.json())
-                .then((pathPoints) => this.setState({ pathPoints }));
-            }}
+            onClick={this.getPath}
           />
         </div>
       </div>
