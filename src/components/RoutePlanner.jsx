@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import TextField from 'material-ui/TextField';
-
 import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
 import FlatButton from 'material-ui/FlatButton';
@@ -10,6 +9,7 @@ import uuid from 'node-uuid';
 import _ from 'lodash';
 
 import GoogleMap from './GoogleMap';
+import MarkerLocation from './MarkerLocation';
 import * as directionsApi from '../api/directions';
 
 export default class RoutePlanner extends Component {
@@ -65,28 +65,12 @@ export default class RoutePlanner extends Component {
         </div>
         <div className="col-lg-3">
           {_.values(markerList).map(({ id, location }) => (
-            <div
-              className="marker-location"
+            <MarkerLocation
+              id={id}
               key={id}
-            >
-              <FontIcon
-                className="drag-handle material-icons"
-                color={grey500}
-              >
-                drag_handle
-              </FontIcon>
-              <TextField
-                style={{
-                  fontSize: 12,
-                }}
-                id={`tf-${id}`}
-                value={location}
-                fullWidth
-              />
-              <IconButton touch onClick={() => this.removeMarker(id)}>
-                <FontIcon className="material-icons" color={red500}>clear</FontIcon>
-              </IconButton>
-            </div>
+              location={location}
+              onRemove={this.removeMarker}
+            />
           ))}
         </div>
         <div className="col-lg-1">
