@@ -63,7 +63,7 @@ export default class RoutePlanner extends Component {
           />
         {showProgressBar && <LinearProgress mode="indeterminate" />}
         </div>
-        <div className="col-lg-3">
+        <div className="col-lg-2">
           {_.values(markerList).map(({ id, location }) => (
             <MarkerLocation
               id={id}
@@ -72,13 +72,6 @@ export default class RoutePlanner extends Component {
               onRemove={this.removeMarker}
             />
           ))}
-        </div>
-        <div className="col-lg-1">
-          <FlatButton
-            label="Directions"
-            primary
-            onClick={this.getPath}
-          />
         </div>
       </div>
     );

@@ -5,6 +5,11 @@ import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
 import { red500, grey500, yellow500 } from 'material-ui/styles/colors';
 
+const COORD_DECIMAL_PLACES = 5;
+const formatCoord = number => number.toFixed(COORD_DECIMAL_PLACES);
+const locationToString = location =>
+  `${formatCoord(location.lat())}, ${formatCoord(location.lng())}`;
+
 export default class MarkerLocation extends React.Component {
   constructor(props) {
     super(props);
@@ -33,7 +38,7 @@ export default class MarkerLocation extends React.Component {
             fontSize: 12,
           }}
           id={`tf-${id}`}
-          value={location}
+          value={locationToString(location)}
           fullWidth
         />
         <IconButton touch onClick={() => onRemove && onRemove(id)}>
