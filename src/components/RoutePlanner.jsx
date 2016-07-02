@@ -1,14 +1,9 @@
 import React, { Component } from 'react';
-import TextField from 'material-ui/TextField';
-import FontIcon from 'material-ui/FontIcon';
-import IconButton from 'material-ui/IconButton';
-import FlatButton from 'material-ui/FlatButton';
 import LinearProgress from 'material-ui/LinearProgress';
-import { red500, grey500 } from 'material-ui/styles/colors';
 import uuid from 'node-uuid';
 import _ from 'lodash';
 
-import GoogleMap from './GoogleMap';
+import Map from './Map';
 import MarkerLocation from './MarkerLocation';
 import * as directionsApi from '../api/directions';
 
@@ -55,7 +50,7 @@ export default class RoutePlanner extends Component {
     return (
       <div className="row">
         <div className="col-lg-6">
-          <GoogleMap
+          <Map
             markerList={_.values(markerList)}
             pathPoints={pathPoints}
             onMapClick={this.addMarker}

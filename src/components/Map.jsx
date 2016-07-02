@@ -1,7 +1,7 @@
 import React from 'react';
 import createGoogleMapInstance from '../api/googleMap';
 
-export default class GoogleMap extends React.Component {
+export default class Map extends React.Component {
 
   constructor(props) {
     super(props);
@@ -52,7 +52,7 @@ export default class GoogleMap extends React.Component {
   }
 }
 
-GoogleMap.propTypes = {
+Map.propTypes = {
   center: React.PropTypes.object,
   zoom: React.PropTypes.number,
   onMapClick: React.PropTypes.func,
@@ -62,7 +62,7 @@ GoogleMap.propTypes = {
   mapBackendFactory: React.PropTypes.func,
 };
 
-GoogleMap.defaultProps = {
+Map.defaultProps = {
   center: { lat: -34.397, lng: 150.644 },
   zoom: 8,
   onMapClick: () => {},
