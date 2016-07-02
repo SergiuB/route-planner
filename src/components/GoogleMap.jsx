@@ -1,23 +1,5 @@
 import React from 'react';
-import fontawesome from 'fontawesome-markers';
-
-const markerIcon = {
-  path: fontawesome.DOT_CIRCLE_O,
-  scale: 0.2,
-  strokeWeight: 0.2,
-  strokeColor: 'black',
-  strokeOpacity: 1,
-  fillColor: 'red',
-  fillOpacity: 1,
-  anchor: new google.maps.Point(22, -12),
-};
-
-const polylineStyle = {
-  geodesic: true,
-  strokeColor: 'red',
-  strokeOpacity: 1.0,
-  strokeWeight: 2,
-};
+import createGoogleMapInstance from '../api/googleMap';
 
 export default class GoogleMap extends React.Component {
 
@@ -27,70 +9,42 @@ export default class GoogleMap extends React.Component {
   }
 
   componentDidMount() {
-    const { center, zoom, markerList, onMapClick } = this.props;
-    this.map = new google.maps.Map(this.mapEl, { center, zoom });
-    this.map.addListener('click', e => onMapClick && onMapClick(e.latLng));
-    this.createMarkers(markerList);
+    const { center, zoom, markerList, onMapClick, mapBackendFactory } = this.props;
+    this.mapBackend = mapBackendFactory(this.mapEl, {
+      center,
+      zoom,
+      listeners: {
+        click: e => onMapClick(e.latLng),
+      },
+    });
+
+    const markersWithListeners = this.appendDblClickHandler(markerList);
+    this.mapBackend.createMarkers(markersWithListeners);
   }
 
   componentWillReceiveProps(nextProps) {
     const { markerList, pathPoints } = nextProps;
-    this.clearMarkers();
-    this.createMarkers(markerList);
-    this.removePolyline();
-    this.createPolyline(pathPoints);
+    const markersWithListeners = this.appendDblClickHandler(markerList);
+    const path = pathPoints.map(([lat, lng]) => ({ lat, lng }));
+    this.mapBackend.createMarkers(markersWithListeners);
+    this.mapBackend.createPolyline(path);
   }
 
   componentWillUnmount() {
-    this.clearMarkers();
-    this.removePolyline();
+    this.mapBackend.clearMarkers();
+    this.mapBackend.removePolyline();
   }
 
-  createPolyline(points) {
-    const path = points.map(([lat, lng]) => ({ lat, lng }));
-    this.polyline = new google.maps.Polyline(Object.assign({ path }, polylineStyle));
-    this.polyline.setMap(this.map);
-  }
-
-  removePolyline() {
-    if (this.polyline) {
-      this.polyline.setMap(null);
-      this.polyline = undefined;
-    }
-  }
-
-  createMarkers(markerList) {
-    this.markers = markerList.map(this.createMarker.bind(this));
-  }
-
-  clearMarkers() {
-    for (const marker of this.markers) {
-      google.maps.event.clearInstanceListeners(marker);
-      marker.setMap(null);
-    }
-    this.markers = [];
-  }
-
-  createMarker({ id, location }) {
-    const marker = new google.maps.Marker({
-      position: location,
-      map: this.map,
-      icon: markerIcon,
-    });
-    marker.metadata = { id };
-    const self = this;
-    marker.addListener('dblclick', function handler() {
-      self.removeMarker(this);
-    });
-    return marker;
-  }
-
-  removeMarker(marker) {
+  appendDblClickHandler(markerList) {
     const { onMarkerDblClick } = this.props;
-    if (onMarkerDblClick) {
-      onMarkerDblClick(marker.metadata.id);
-    }
+    return markerList.map(
+      markerData => Object.assign({}, markerData, {
+        listeners: {
+          dblclick: () => onMarkerDblClick(markerData.id),
+        },
+      }));
   }
+
   render() {
     return (
       <div className="map" ref={mapEl => { this.mapEl = mapEl; }}></div>
@@ -105,9 +59,13 @@ GoogleMap.propTypes = {
   onMarkerDblClick: React.PropTypes.func,
   markerList: React.PropTypes.array,
   pathPoints: React.PropTypes.array,
+  mapBackendFactory: React.PropTypes.func,
 };
 
 GoogleMap.defaultProps = {
   center: { lat: -34.397, lng: 150.644 },
   zoom: 8,
+  onMapClick: () => {},
+  onMarkerDblClick: () => {},
+  mapBackendFactory: createGoogleMapInstance,
 };

@@ -41,7 +41,7 @@ export default class MarkerLocation extends React.Component {
           value={locationToString(location)}
           fullWidth
         />
-        <IconButton touch onClick={() => onRemove && onRemove(id)}>
+        <IconButton touch onClick={() => onRemove(id)}>
           <FontIcon className="material-icons" color={red500}>clear</FontIcon>
         </IconButton>
       </div>
@@ -50,7 +50,11 @@ export default class MarkerLocation extends React.Component {
 }
 
 MarkerLocation.propTypes = {
-  id: React.PropTypes.string,
-  location: React.PropTypes.object,
+  id: React.PropTypes.string.isRequired,
+  location: React.PropTypes.object.isRequired,
   onRemove: React.PropTypes.func,
+};
+
+MarkerLocation.defaultProps = {
+  onRemove: () => {},
 };
