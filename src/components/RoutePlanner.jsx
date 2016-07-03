@@ -18,7 +18,7 @@ export default class RoutePlanner extends Component {
       showProgressBar: false,
     };
     this.handleMapClick = this.handleMapClick.bind(this);
-    this.handleMarkerDblClick = this.removeMarker.bind(this);
+    this.handleMarkerDblClick = this.handleMarkerDblClick.bind(this);
     this.getPath = _.debounce(this.getPath.bind(this), 1000);
   }
 
