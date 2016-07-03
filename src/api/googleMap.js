@@ -79,6 +79,37 @@ class GoogleMapInstance {
   }
 }
 
-export default function createGoogleMapInstance(elem, opts) {
+class Geocoder {
+  constructor() {
+    this.geocoder = new google.maps.Geocoder;
+  }
+
+  geocodeLocation(latLng) {
+    return new Promise(( resolve, reject) => {
+      this.geocoder.geocode({ location: latLng}, (results, status) => {
+        if (status === google.maps.GeocoderStatus.OK) {
+          if (results[1]) {
+            resolve(results[1].formatted_address);
+          } else {
+            reject('No results found');
+          }
+        } else {
+          reject('Geocoder failed due to: ' + status);
+        }
+      });
+    });
+  }
+
+}
+
+export function createGoogleMapInstance(elem, opts) {
   return new GoogleMapInstance(elem, opts);
+}
+
+let geocoder;
+export function geocodeLocation(latLng) {
+  if (!geocoder) {
+    geocoder = new Geocoder();
+  }
+  return geocoder.geocodeLocation(latLng);
 }

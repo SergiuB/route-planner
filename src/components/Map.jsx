@@ -1,5 +1,5 @@
 import React from 'react';
-import createGoogleMapInstance from '../api/googleMap';
+import { createGoogleMapInstance } from '../api/googleMap';
 
 export default class Map extends React.Component {
 

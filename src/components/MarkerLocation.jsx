@@ -18,7 +18,7 @@ export default class MarkerLocation extends React.Component {
     };
   }
   render() {
-    const { id, location, onRemove } = this.props;
+    const { id, location, address, onRemove } = this.props;
     const { hovered } = this.state;
     return (
       <div
@@ -38,7 +38,7 @@ export default class MarkerLocation extends React.Component {
             fontSize: 12,
           }}
           id={`tf-${id}`}
-          value={locationToString(location)}
+          value={address || locationToString(location)}
           fullWidth
         />
         <IconButton touch onClick={() => onRemove(id)}>
@@ -52,6 +52,7 @@ export default class MarkerLocation extends React.Component {
 MarkerLocation.propTypes = {
   id: React.PropTypes.string.isRequired,
   location: React.PropTypes.object.isRequired,
+  address: React.PropTypes.string,
   onRemove: React.PropTypes.func,
 };
 
