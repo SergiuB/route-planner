@@ -27,12 +27,14 @@ export default class MarkerLocation extends React.Component {
         onMouseEnter={() => this.setState({ hovered: true })}
         onMouseLeave={() => this.setState({ hovered: false })}
       >
-        <FontIcon
-          className="drag-handle material-icons"
-          color={hovered ? yellow500 : grey500}
-        >
-          drag_handle
-        </FontIcon>
+        {hovered && (
+          <FontIcon
+            className="drag-handle material-icons"
+            color={grey500}
+          >
+            drag_handle
+          </FontIcon>
+        )}
         <TextField
           style={{
             fontSize: 12,
