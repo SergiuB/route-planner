@@ -58,6 +58,7 @@ class GoogleMapInstance {
       position: location,
       map: this.map,
       icon: markerIcon,
+      draggable:true,
     });
     marker.metadata = { id };
 

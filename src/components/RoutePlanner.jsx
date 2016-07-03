@@ -18,7 +18,8 @@ export default class RoutePlanner extends Component {
       showProgressBar: false,
     };
     this.handleMapClick = this.handleMapClick.bind(this);
-    this.handleMarkerDblClick = this.handleMarkerDblClick.bind(this);
+    this.removeMarker = this.removeMarker.bind(this);
+    this.handleMarkerDragEnd = this.handleMarkerDragEnd.bind(this);
     this.getPath = _.debounce(this.getPath.bind(this), 1000);
   }
 
@@ -31,29 +32,37 @@ export default class RoutePlanner extends Component {
       .then((result) => this.setState({ pathPoints: result, showProgressBar: false }));
   }
 
-  addMarker({ id, location, address }) {
+  updateOrAddMarker({ id, location, address }) {
     const { markerList } = this.state;
     const newMarkerList = Object.assign({}, markerList, { [id]: { id, location, address } });
     this.setState({ markerList: newMarkerList, showProgressBar: true });
   }
 
-  handleMapClick(location) {
-    const id = uuid.v4();
+  markerChange({ id, location }) {
     geocodeLocation({ lat: location.lat(), lng: location.lng() })
       .then(address => {
-        this.addMarker({ id, location, address });
+        this.updateOrAddMarker({ id, location, address });
       })
       .catch(() => {
-        this.addMarker({ id, location });
+        this.updateOrAddMarker({ id, location });
       });
     this.getPath();
   }
 
-  handleMarkerDblClick(id) {
+  handleMapClick(location) {
+    const id = uuid.v4();
+    this.markerChange({ id, location });
+  }
+
+  removeMarker(id) {
     const { markerList } = this.state;
     const newMarkerList = _.omit(markerList, id);
     this.setState({ markerList: newMarkerList, showProgressBar: true });
     this.getPath();
+  }
+
+  handleMarkerDragEnd(id, location) {
+    this.markerChange({ id, location });
   }
 
   render() {
@@ -65,7 +74,8 @@ export default class RoutePlanner extends Component {
             markerList={_.values(markerList)}
             pathPoints={pathPoints}
             onMapClick={this.handleMapClick}
-            onMarkerDblClick={this.handleMarkerDblClick}
+            onMarkerDblClick={this.removeMarker}
+            onMarkerDragEnd={this.handleMarkerDragEnd}
           />
         {showProgressBar && <LinearProgress mode="indeterminate" />}
         </div>

@@ -18,13 +18,13 @@ export default class Map extends React.Component {
       },
     });
 
-    const markersWithListeners = this.appendDblClickHandler(markerList);
+    const markersWithListeners = this.appendListeners(markerList);
     this.mapBackend.createMarkers(markersWithListeners);
   }
 
   componentWillReceiveProps(nextProps) {
     const { markerList, pathPoints } = nextProps;
-    const markersWithListeners = this.appendDblClickHandler(markerList);
+    const markersWithListeners = this.appendListeners(markerList);
     const path = pathPoints.map(([lat, lng]) => ({ lat, lng }));
     this.mapBackend.createMarkers(markersWithListeners);
     this.mapBackend.createPolyline(path);
@@ -35,12 +35,13 @@ export default class Map extends React.Component {
     this.mapBackend.removePolyline();
   }
 
-  appendDblClickHandler(markerList) {
-    const { onMarkerDblClick } = this.props;
+  appendListeners(markerList) {
+    const { onMarkerDblClick, onMarkerDragEnd } = this.props;
     return markerList.map(
       markerData => Object.assign({}, markerData, {
         listeners: {
           dblclick: () => onMarkerDblClick(markerData.id),
+          dragend: (e) => onMarkerDragEnd(markerData.id, e.latLng),
         },
       }));
   }
@@ -57,6 +58,7 @@ Map.propTypes = {
   zoom: React.PropTypes.number,
   onMapClick: React.PropTypes.func,
   onMarkerDblClick: React.PropTypes.func,
+  onMarkerDragEnd: React.PropTypes.func,
   markerList: React.PropTypes.array,
   pathPoints: React.PropTypes.array,
   mapBackendFactory: React.PropTypes.func,
@@ -67,5 +69,6 @@ Map.defaultProps = {
   zoom: 8,
   onMapClick: () => {},
   onMarkerDblClick: () => {},
+  onMarkerDragEnd: () => {},
   mapBackendFactory: createGoogleMapInstance,
 };
