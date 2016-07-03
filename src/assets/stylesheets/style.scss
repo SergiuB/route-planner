@@ -11,9 +11,11 @@ html,body{
 
 .marker-location {
   display: flex;
-}
-
-.drag-handle {
-  top: 12px;
-  right: 5px;
+  .preamble {
+    width: 60px;
+    margin-right: 30px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
 }

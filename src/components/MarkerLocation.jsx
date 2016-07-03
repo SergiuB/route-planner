@@ -20,21 +20,34 @@ export default class MarkerLocation extends React.Component {
   render() {
     const { id, location, address, onRemove } = this.props;
     const { hovered } = this.state;
+    const dragHandleEl = (
+      <FontIcon
+        className="material-icons"
+        color={grey500}
+        style={{ fontSize: 18 }}
+      >
+        drag_handle
+      </FontIcon>
+    );
     return (
       <div
         className="marker-location"
         key={id}
-        onMouseEnter={() => this.setState({ hovered: true })}
-        onMouseLeave={() => this.setState({ hovered: false })}
       >
-        {hovered && (
+        <div
+          className="preamble"
+          onMouseEnter={() => this.setState({ hovered: true })}
+          onMouseLeave={() => this.setState({ hovered: false })}
+        >
+          {hovered && dragHandleEl}
           <FontIcon
-            className="drag-handle material-icons"
+            className="material-icons"
             color={grey500}
+            style={{ fontSize: 18 }}
           >
-            drag_handle
+            radio_button_unchecked
           </FontIcon>
-        )}
+        </div>
         <TextField
           style={{
             fontSize: 12,
