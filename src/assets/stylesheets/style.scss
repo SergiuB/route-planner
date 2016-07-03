@@ -9,13 +9,39 @@ html,body{
   height: 500px;
 }
 
+.marker-list {
+  position: relative;
+}
+
 .marker-location {
   display: flex;
+
   .preamble {
     width: 60px;
-    margin-right: 30px;
+    margin-right: 25px;
+    margin-left: 10px;
     display: flex;
     justify-content: flex-end;
     align-items: center;
+  }
+}
+
+.segment-dots {
+  position: absolute;
+  left: -14px;
+  height: 35px;
+  width: 50px;
+  font-size: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  border-right: 1px dotted;
+
+  .segment-dots-data {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2px;
   }
 }

@@ -5,6 +5,8 @@ import _ from 'lodash';
 
 import Map from './Map';
 import MarkerLocation from './MarkerLocation';
+import SegmentDots from './SegmentDots';
+
 import * as directionsApi from '../api/directions';
 import { geocodeLocation } from '../api/googleMap';
 
@@ -80,15 +82,20 @@ export default class RoutePlanner extends Component {
         {showProgressBar && <LinearProgress mode="indeterminate" />}
         </div>
         <div className="col-lg-3">
-          {_.values(markerList).map(({ id, location, address }) => (
-            <MarkerLocation
-              id={id}
-              key={id}
-              location={location}
-              address={address}
-              onRemove={this.removeMarker}
-            />
-          ))}
+          <div className="marker-list">
+            {_.times(_.values(markerList).length - 1).map(idx => (
+              <SegmentDots segmentIdx={idx} segmentDistance={100} segmentElevation={500} />
+            ))}
+            {_.values(markerList).map(({ id, location, address }) => (
+              <MarkerLocation
+                id={id}
+                key={id}
+                location={location}
+                address={address}
+                onRemove={this.removeMarker}
+              />
+            ))}
+          </div>
         </div>
       </div>
     );
