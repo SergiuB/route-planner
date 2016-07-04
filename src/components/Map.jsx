@@ -14,7 +14,7 @@ export default class Map extends React.Component {
       center,
       zoom,
       listeners: {
-        click: e => onMapClick(e.latLng),
+        click: e => onMapClick({ lat: e.latLng.lat(), lng: e.latLng.lng() }),
       },
     });
 

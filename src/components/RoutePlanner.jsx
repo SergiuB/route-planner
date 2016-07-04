@@ -26,7 +26,7 @@ export default class RoutePlanner extends Component {
   getPath() {
     const { markerList } = this.state;
     const points = _.values(markerList).map(
-      ({ location }) => [location.lat(), location.lng()]
+      ({ location }) => [location.lat, location.lng]
     );
     directionsApi.getDirections(points)
       .then((result) => this.setState({ pathPoints: result, showProgressBar: false }));
