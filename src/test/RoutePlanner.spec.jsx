@@ -37,7 +37,6 @@ describe('<RoutePlanner />', () => {
     const mapWrapper = wrapper.find(Map);
     mapWrapper.props().onMapClick(location)
       .then(() => {
-        wrapper.update();
         const id = wrapper.find(MarkerLocation).props().id;
         mapWrapper.props().onMarkerDblClick(id);
         wrapper.update();
