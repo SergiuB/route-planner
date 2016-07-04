@@ -39,7 +39,7 @@ export default class RoutePlanner extends Component {
   }
 
   markerChange({ id, location }) {
-    geocodeLocation({ lat: location.lat(), lng: location.lng() })
+    geocodeLocation({ lat: location.lat, lng: location.lng })
       .then(address => {
         this.updateOrAddMarker({ id, location, address });
       })
