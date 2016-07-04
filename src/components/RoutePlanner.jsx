@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 import Map from './Map';
 import MarkerLocation from './MarkerLocation';
-import * as directionsApi from '../api/directions';
+import { getDirections } from '../api/directions';
 import { geocodeLocation } from '../api/googleMap';
 
 export default class RoutePlanner extends Component {
@@ -28,7 +28,7 @@ export default class RoutePlanner extends Component {
     const points = _.values(markerList).map(
       ({ location }) => [location.lat, location.lng]
     );
-    directionsApi.getDirections(points)
+    this.props.api.getDirections(points)
       .then((result) => this.setState({ pathPoints: result, showProgressBar: false }));
   }
 
@@ -39,19 +39,20 @@ export default class RoutePlanner extends Component {
   }
 
   markerChange({ id, location }) {
-    geocodeLocation({ lat: location.lat, lng: location.lng })
+    const p1 = this.props.api.geocodeLocation({ lat: location.lat, lng: location.lng })
       .then(address => {
         this.updateOrAddMarker({ id, location, address });
       })
       .catch(() => {
         this.updateOrAddMarker({ id, location });
       });
-    this.getPath();
+    const p2 = this.getPath();
+    return Promise.all([p1, p2]);
   }
 
   handleMapClick(location) {
     const id = uuid.v4();
-    this.markerChange({ id, location });
+    return this.markerChange({ id, location });
   }
 
   removeMarker(id) {
@@ -94,3 +95,14 @@ export default class RoutePlanner extends Component {
     );
   }
 }
+
+RoutePlanner.propTypes = {
+  api: React.PropTypes.object,
+};
+
+RoutePlanner.defaultProps = {
+  api: {
+    getDirections,
+    geocodeLocation,
+  },
+};
