@@ -8,7 +8,7 @@ import Map from '../components/Map';
 
 const apiMock = {
   getDirections: () => Promise.resolve([]),
-  geocodeLocation: () => Promise.resolve('Address'),
+  geocodeLocation: ({ lat, lng }) => Promise.resolve(`Address${lat}${lng}`),
 };
 
 describe('<RoutePlanner />', () => {
@@ -17,7 +17,7 @@ describe('<RoutePlanner />', () => {
     expect(wrapper.find(Map)).to.have.length(1);
   });
 
-  it(`renders a MarkerLocation component at the right location
+  it(`renders a MarkerLocation component at the right location and with right address
     after click on map`, async () => {
     const location = { lat: 1, lng: 1 };
     const wrapper = shallow(<RoutePlanner api={apiMock} />);
@@ -25,7 +25,10 @@ describe('<RoutePlanner />', () => {
     await wrapper.find(Map).props().onMapClick(location);
     wrapper.update();
 
-    expect(wrapper.find({ location })).to.have.length(1);
+    const mlWrapper = wrapper.find(MarkerLocation);
+    expect(mlWrapper).to.have.length(1);
+    expect(mlWrapper.props().location).to.equal(location);
+    expect(mlWrapper.props().address).to.equal('Address11');
   });
 
   it(`renders a Map component with one marker data object in markerList prop
