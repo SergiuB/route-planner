@@ -23,13 +23,13 @@ export default class RoutePlanner extends Component {
     this.getPath = _.debounce(this.getPath.bind(this), 1000);
   }
 
-  getPath() {
+  async getPath() {
     const { markerList } = this.state;
     const points = _.values(markerList).map(
       ({ location }) => [location.lat, location.lng]
     );
-    this.props.api.getDirections(points)
-      .then((result) => this.setState({ pathPoints: result, showProgressBar: false }));
+    const pathPoints = await this.props.api.getDirections(points);
+    this.setState({ pathPoints, showProgressBar: false });
   }
 
   updateOrAddMarker({ id, location, address }) {
@@ -38,16 +38,16 @@ export default class RoutePlanner extends Component {
     this.setState({ markerList: newMarkerList, showProgressBar: true });
   }
 
-  markerChange({ id, location }) {
-    const p1 = this.props.api.geocodeLocation({ lat: location.lat, lng: location.lng })
-      .then(address => {
-        this.updateOrAddMarker({ id, location, address });
-      })
-      .catch(() => {
-        this.updateOrAddMarker({ id, location });
-      });
-    const p2 = this.getPath();
-    return Promise.all([p1, p2]);
+  async markerChange({ id, location }) {
+    try {
+      const address = await this.props.api.geocodeLocation({ lat: location.lat, lng: location.lng });
+      this.updateOrAddMarker({ id, location, address });
+    }
+    catch (error) {
+      console.log(`Could not obtain addres for location ${location}: ${error}`);
+      this.updateOrAddMarker({ id, location });
+    };
+    await this.getPath();
   }
 
   handleMapClick(location) {
