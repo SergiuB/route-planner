@@ -63,7 +63,7 @@ export default class RoutePlanner extends Component {
   }
 
   handleMarkerDragEnd(id, location) {
-    this.markerChange({ id, location });
+    return this.markerChange({ id, location });
   }
 
   render() {
