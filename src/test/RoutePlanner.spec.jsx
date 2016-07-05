@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import RoutePlanner from '../components/RoutePlanner';
@@ -23,8 +24,23 @@ describe('<RoutePlanner />', () => {
     wrapper.find(Map).props().onMapClick(location)
       .then(() => {
         wrapper.update();
-        const markerWrapper = wrapper.find(MarkerLocation);
-        expect(markerWrapper.props().location).to.equal(location);
+        expect(wrapper.find({ location })).to.have.length(1);
+        done();
+      })
+      .catch(done);
+  });
+
+  it(`renders a <Map /> component with one marker data object in markerList prop
+    after click on map`, (done) => {
+    const location = { lat: 1, lng: 1 };
+    const wrapper = shallow(<RoutePlanner api={apiMock} />);
+    let mapWrapper = wrapper.find(Map);
+    mapWrapper.props().onMapClick(location)
+      .then(() => {
+        wrapper.update();
+        mapWrapper = wrapper.find(Map);
+        const markerData = _.values(mapWrapper.props().markerList)[0];
+        expect(markerData.location).to.equal(location);
         done();
       })
       .catch(done);
