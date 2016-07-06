@@ -31,12 +31,14 @@ function getFullPath(route) {
 
 function getPathBetweenTwoLocations({ origin, destination }) {
   return new Promise((resolve, reject) => {
-    gm.directions({ origin, destination }, (error, directions) => {
+    gm.directions({ origin, destination }, (error, result) => {
       if (error) {
         reject(error);
+      } else if (result.status !== 'OK') {
+        reject(result.status);
       } else {
-        const [route] = directions.routes;
-        const points = getFullPath(route);
+        const [firstRoute] = result.routes;
+        const points = getFullPath(firstRoute);
         resolve(points);
       }
     });
@@ -59,8 +61,10 @@ function getElevationsSingleRequest(points) {
   return new Promise((resolve, reject) => {
     const locations = points.map(point => point.join(',')).join('|');
     gm.elevationFromLocations({ locations }, (error, result) => {
-      if (error || result.status !== 'OK') {
+      if (error) {
         reject(error);
+      } else if (result.status !== 'OK') {
+        reject(result.status);
       } else {
         resolve(result.results.map(r => r.elevation));
       }

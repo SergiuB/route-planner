@@ -11,16 +11,20 @@ const apiMock = {
   geocodeLocation: ({ lat, lng }) => Promise.resolve(`Address${lat}${lng}`),
 };
 
+function createRoutePlanner() {
+  return <RoutePlanner api={apiMock} debounceTime={0} />;
+}
+
 describe('<RoutePlanner />', () => {
   it('renders a Map component', () => {
-    const wrapper = shallow(<RoutePlanner />);
+    const wrapper = shallow(createRoutePlanner());
     expect(wrapper.find(Map)).to.have.length(1);
   });
 
   it(`renders a MarkerLocation component at the right location and with right address
     after click on map`, async () => {
     const location = { lat: 1, lng: 1 };
-    const wrapper = shallow(<RoutePlanner api={apiMock} />);
+    const wrapper = shallow(createRoutePlanner());
 
     await wrapper.find(Map).props().onMapClick(location);
     wrapper.update();
@@ -34,7 +38,7 @@ describe('<RoutePlanner />', () => {
   it(`renders a Map component with one marker data object in markerList prop
     after click on map`, async () => {
     const location = { lat: 1, lng: 1 };
-    const wrapper = shallow(<RoutePlanner api={apiMock} />);
+    const wrapper = shallow(createRoutePlanner());
     let mapWrapper = wrapper.find(Map);
 
     await mapWrapper.props().onMapClick(location);
@@ -48,7 +52,7 @@ describe('<RoutePlanner />', () => {
   it(`removes the previously added MarkerLocation component
     after double clicking the marker on map`, async () => {
     const location = { lat: 1, lng: 1 };
-    const wrapper = shallow(<RoutePlanner api={apiMock} />);
+    const wrapper = shallow(createRoutePlanner());
     const mapWrapper = wrapper.find(Map);
 
     await mapWrapper.props().onMapClick(location);
@@ -65,7 +69,7 @@ describe('<RoutePlanner />', () => {
   it('updates the MarkerLocation component if a marker is dragged to a new location', async () => {
     const location = { lat: 1, lng: 1 };
     const newLocation = { lat: 2, lng: 2 };
-    const wrapper = shallow(<RoutePlanner api={apiMock} />);
+    const wrapper = shallow(<RoutePlanner api={apiMock} debounceTime={0} />);
     let mapWrapper = wrapper.find(Map);
 
     await mapWrapper.props().onMapClick(location)

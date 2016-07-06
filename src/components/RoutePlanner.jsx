@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import LinearProgress from 'material-ui/LinearProgress';
 import uuid from 'node-uuid';
 import _ from 'lodash';
+import debounce from 'es6-promise-debounce';
 
 import Map from './Map';
 import MarkerLocation from './MarkerLocation';
@@ -17,10 +18,22 @@ export default class RoutePlanner extends Component {
       pathPoints: [],
       showProgressBar: false,
     };
-    this.handleMapClick = this.handleMapClick.bind(this);
-    this.removeMarker = this.removeMarker.bind(this);
-    this.handleMarkerDragEnd = this.handleMarkerDragEnd.bind(this);
-    this.getPath = _.debounce(this.getPath.bind(this), 1000);
+    this.handleMapClick = this.executeWithProgress(this.handleMapClick);
+    this.removeMarker = this.executeWithProgress(this.removeMarker);
+    this.handleMarkerDragEnd = this.executeWithProgress(this.handleMarkerDragEnd);
+
+    this.getPath = debounce(this.getPath.bind(this), this.props.debounceTime);
+  }
+
+  executeWithProgress(fn) {
+    return async (...params) => {
+      this.setState({ showProgressBar: true });
+      try {
+        await fn.apply(this, params);
+      } finally {
+        this.setState({ showProgressBar: false });
+      }
+    }
   }
 
   async getPath() {
@@ -29,13 +42,13 @@ export default class RoutePlanner extends Component {
       ({ location }) => [location.lat, location.lng]
     );
     const pathPoints = await this.props.api.getDirections(points);
-    this.setState({ pathPoints, showProgressBar: false });
+    this.setState({ pathPoints});
   }
 
   updateOrAddMarker({ id, location, address }) {
     const { markerList } = this.state;
     const newMarkerList = Object.assign({}, markerList, { [id]: { id, location, address } });
-    this.setState({ markerList: newMarkerList, showProgressBar: true });
+    this.setState({ markerList: newMarkerList});
   }
 
   async markerChange({ id, location }) {
@@ -44,10 +57,9 @@ export default class RoutePlanner extends Component {
       this.updateOrAddMarker({ id, location, address });
     }
     catch (error) {
-      console.log(`Could not obtain addres for location ${location}: ${error}`);
       this.updateOrAddMarker({ id, location });
     };
-    await this.getPath();
+    return this.getPath();
   }
 
   handleMapClick(location) {
@@ -58,8 +70,8 @@ export default class RoutePlanner extends Component {
   removeMarker(id) {
     const { markerList } = this.state;
     const newMarkerList = _.omit(markerList, id);
-    this.setState({ markerList: newMarkerList, showProgressBar: true });
-    this.getPath();
+    this.setState({ markerList: newMarkerList});
+    return this.getPath();
   }
 
   handleMarkerDragEnd(id, location) {
@@ -98,6 +110,7 @@ export default class RoutePlanner extends Component {
 
 RoutePlanner.propTypes = {
   api: React.PropTypes.object,
+  debounceTime: React.PropTypes.number,
 };
 
 RoutePlanner.defaultProps = {
@@ -105,4 +118,5 @@ RoutePlanner.defaultProps = {
     getDirections,
     geocodeLocation,
   },
+  debounceTime: 1000
 };
