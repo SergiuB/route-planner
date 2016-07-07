@@ -1,4 +1,4 @@
-const { gmaps } = require('./config');
+const { gmaps } = require('../config');
 const GoogleMapsAPI = require('googlemaps');
 const polyline = require('polyline');
 const geolib = require('geolib');
