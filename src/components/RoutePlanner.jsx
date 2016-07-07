@@ -14,7 +14,7 @@ export default class RoutePlanner extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      markers: {},
+      markers: [],
       segments: [],
       showProgressBar: false,
     };
@@ -51,8 +51,12 @@ export default class RoutePlanner extends Component {
 
   updateOrAddMarker({ id, location, address }) {
     const { markers } = this.state;
-    const newMarkerList = Object.assign({}, markers, { [id]: { id, location, address } });
-    this.setState({ markers: newMarkerList});
+    const newMarkers = markers.slice();
+    const existingMarker = _.find(newMarkers, { id });
+    existingMarker
+      ? Object.assign(existingMarker, { location, address })
+      : newMarkers.push({ id, location, address });
+    this.setState({ markers: newMarkers});
   }
 
   async markerChange({ id, location }) {
@@ -63,7 +67,7 @@ export default class RoutePlanner extends Component {
     catch (error) {
       this.updateOrAddMarker({ id, location });
     };
-    return this.getPath(_.values(this.state.markers));
+    return this.getPath(this.state.markers);
   }
 
   handleMapClick(location) {
@@ -73,9 +77,9 @@ export default class RoutePlanner extends Component {
 
   removeMarker(id) {
     const { markers } = this.state;
-    const newMarkerList = _.omit(markers, id);
-    this.setState({ markers: newMarkerList});
-    return this.getPath(_.values(newMarkerList));
+    const newMarkers = _.reject(markers, { id });
+    this.setState({ markers: newMarkers});
+    return this.getPath(newMarkers);
   }
 
   handleMarkerDragEnd(id, location) {
@@ -88,7 +92,7 @@ export default class RoutePlanner extends Component {
       <div className="row">
         <div className="col-lg-6">
           <Map
-            markerList={_.values(markers)}
+            markerList={markers}
             pathPoints={_.reduce(
                             segments,
                             (pathPoints, segment) => _.concat(pathPoints, segment.path),
@@ -101,7 +105,7 @@ export default class RoutePlanner extends Component {
         {showProgressBar && <LinearProgress mode="indeterminate" />}
         </div>
         <div className="col-lg-3">
-          {_.values(markers).map(({ id, location, address }) => (
+          {markers.map(({ id, location, address }) => (
             <MarkerLocation
               id={id}
               key={id}
