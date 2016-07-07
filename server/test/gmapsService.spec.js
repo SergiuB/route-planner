@@ -4,13 +4,15 @@ const expect = require('chai').expect;
 
 describe('GmapsService', () => {
   it('returns a path between multiple locations', (done) => {
-    directionsService.getPath(['Bucharest, Romania', 'Chisinau, Moldavia', 'Moscow, Russia' ])
-      .then((path) => {
-        const firstPoint = path[0];
-        const midPoint = path[8836];
-        const lastPoint = path[path.length - 1];
+    directionsService.getPath(['Bucharest, Romania', 'Chisinau, Moldavia', 'Moscow, Russia'])
+      .then(([firstSegment, secondSegment, ...otherSegments]) => {
+        expect(otherSegments.length).to.be.empty;
+
+        const firstPoint = _.first(firstSegment);
+        const midPoint = _.first(secondSegment);
+        const lastPoint = _.last(secondSegment);
         const [expectedFirstPoint, expectedMidPoint, expectedLastPoint] = [
-          [ 44.42659, 26.10278 ], [ 47.00979, 28.86264 ], [ 55.75615, 37.6172 ]];
+          [44.42659, 26.10278], [47.00979, 28.86264], [55.75615, 37.6172]];
 
         expect(firstPoint).to.deep.equal(expectedFirstPoint);
         expect(midPoint).to.deep.equal(expectedMidPoint);
@@ -22,7 +24,8 @@ describe('GmapsService', () => {
 
   it('returns elevations for given points', (done) => {
     // urcare Transfagarasan
-    directionsService.getPath(['45.56977227, 24.61139202', '45.59476204 , 24.62010384' ])
+    directionsService.getPath(['45.56977227, 24.61139202', '45.59476204 , 24.62010384'])
+      .then(paths => paths[0])
       .then(directionsService.getElevations)
       .then(elevations => {
         expect(elevations).to.be.an('Array');

@@ -52,7 +52,7 @@ exports.getPath = (locations) => {
   const pathPromises = validPairs.map(getPathBetweenTwoLocations);
   return new Promise((resolve, reject) => {
     Promise.all(pathPromises)
-      .then(paths => resolve(_.concat.apply(null, paths)))
+      .then(resolve)
       .catch(reject);
   });
 };
