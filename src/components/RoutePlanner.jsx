@@ -92,10 +92,10 @@ export default class RoutePlanner extends Component {
       <div className="row">
         <div className="col-lg-6">
           <Map
-            markerList={markers}
-            pathPoints={_.reduce(
+            markers={markers}
+            path={_.reduce(
                             segments,
-                            (pathPoints, segment) => _.concat(pathPoints, segment.path),
+                            (path, segment) => _.concat(path, segment.path),
                             []
                        )}
             onMapClick={this.handleMapClick}

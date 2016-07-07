@@ -36,8 +36,9 @@ class GoogleMapInstance {
   }
 
   createPolyline(path) {
+    const formattedPath = path.map(([lat, lng]) => ({ lat, lng }));
     this.removePolyline();
-    this.polyline = new google.maps.Polyline(Object.assign({ path }, polylineStyle));
+    this.polyline = new google.maps.Polyline(Object.assign({ path: formattedPath }, polylineStyle));
     this.polyline.setMap(this.map);
   }
 

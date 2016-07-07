@@ -3,13 +3,8 @@ import { createGoogleMapInstance } from '../api/googleMap';
 
 export default class Map extends React.Component {
 
-  constructor(props) {
-    super(props);
-    this.markers = [];
-  }
-
   componentDidMount() {
-    const { center, zoom, markerList, onMapClick, mapBackendFactory } = this.props;
+    const { center, zoom, markers, onMapClick, mapBackendFactory } = this.props;
     this.mapBackend = mapBackendFactory(this.mapEl, {
       center,
       zoom,
@@ -18,14 +13,13 @@ export default class Map extends React.Component {
       },
     });
 
-    const markersWithListeners = this.appendListeners(markerList);
+    const markersWithListeners = this.appendListeners(markers);
     this.mapBackend.createMarkers(markersWithListeners);
   }
 
   componentWillReceiveProps(nextProps) {
-    const { markerList, pathPoints } = nextProps;
-    const markersWithListeners = this.appendListeners(markerList);
-    const path = pathPoints.map(([lat, lng]) => ({ lat, lng }));
+    const { markers, path } = nextProps;
+    const markersWithListeners = this.appendListeners(markers);
     this.mapBackend.createMarkers(markersWithListeners);
     this.mapBackend.createPolyline(path);
   }
@@ -35,9 +29,9 @@ export default class Map extends React.Component {
     this.mapBackend.removePolyline();
   }
 
-  appendListeners(markerList) {
+  appendListeners(markers) {
     const { onMarkerDblClick, onMarkerDragEnd } = this.props;
-    return markerList.map(
+    return markers.map(
       markerData => Object.assign({}, markerData, {
         listeners: {
           dblclick: () => onMarkerDblClick(markerData.id),
@@ -62,8 +56,8 @@ Map.propTypes = {
   onMapClick: React.PropTypes.func,
   onMarkerDblClick: React.PropTypes.func,
   onMarkerDragEnd: React.PropTypes.func,
-  markerList: React.PropTypes.array,
-  pathPoints: React.PropTypes.array,
+  markers: React.PropTypes.array,
+  path: React.PropTypes.array,
   mapBackendFactory: React.PropTypes.func,
 };
 

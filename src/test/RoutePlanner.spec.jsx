@@ -35,7 +35,7 @@ describe('<RoutePlanner />', () => {
     expect(mlWrapper.props().address).to.equal('Address11');
   });
 
-  it(`renders a Map component with one marker data object in markerList prop
+  it(`renders a Map component with one marker data object in markers prop
     after click on map`, async () => {
     const location = { lat: 1, lng: 1 };
     const wrapper = shallow(createRoutePlanner());
@@ -45,7 +45,7 @@ describe('<RoutePlanner />', () => {
     wrapper.update();
 
     mapWrapper = wrapper.find(Map);
-    const markerData = _.values(mapWrapper.props().markerList)[0];
+    const markerData = _.values(mapWrapper.props().markers)[0];
     expect(markerData.location).to.equal(location);
   });
 
@@ -81,7 +81,7 @@ describe('<RoutePlanner />', () => {
     wrapper.update();
 
     mapWrapper = wrapper.find(Map);
-    const markerData = _.values(mapWrapper.props().markerList)[0];
+    const markerData = _.values(mapWrapper.props().markers)[0];
     expect(markerData.location).to.equal(newLocation);
   });
 });
