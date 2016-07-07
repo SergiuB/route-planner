@@ -15,14 +15,14 @@ export default class RoutePlanner extends Component {
     super(props);
     this.state = {
       markers: {},
-      pathPoints: [],
+      segments: [],
       showProgressBar: false,
     };
     this.handleMapClick = this.executeWithProgress(this.handleMapClick);
     this.removeMarker = this.executeWithProgress(this.removeMarker);
     this.handleMarkerDragEnd = this.executeWithProgress(this.handleMarkerDragEnd);
 
-    this.getPath = debounce(this.getPath.bind(this), this.props.debounceTime);
+    this.getPath = this.getPath.bind(this);
   }
 
   executeWithProgress(fn) {
@@ -36,13 +36,17 @@ export default class RoutePlanner extends Component {
     }
   }
 
-  async getPath() {
-    const { markers } = this.state;
-    const points = _.values(markers).map(
+  async getPath(markers) {
+    const points = markers.map(
       ({ location }) => [location.lat, location.lng]
     );
-    const pathPoints = await this.props.api.getDirections(points);
-    this.setState({ pathPoints});
+    const segmentPaths = await this.props.api.getDirections(points);
+    const segments = segmentPaths.map((path, idx) => ({
+      startMarkerId: markers[idx].id,
+      endMarkerId: markers[idx+1].id,
+      path
+    }));
+    this.setState({ segments });
   }
 
   updateOrAddMarker({ id, location, address }) {
@@ -59,7 +63,7 @@ export default class RoutePlanner extends Component {
     catch (error) {
       this.updateOrAddMarker({ id, location });
     };
-    return this.getPath();
+    return this.getPath(_.values(this.state.markers));
   }
 
   handleMapClick(location) {
@@ -71,7 +75,7 @@ export default class RoutePlanner extends Component {
     const { markers } = this.state;
     const newMarkerList = _.omit(markers, id);
     this.setState({ markers: newMarkerList});
-    return this.getPath();
+    return this.getPath(_.values(newMarkerList));
   }
 
   handleMarkerDragEnd(id, location) {
@@ -79,13 +83,17 @@ export default class RoutePlanner extends Component {
   }
 
   render() {
-    const { markers, pathPoints, showProgressBar } = this.state;
+    const { markers, segments, showProgressBar } = this.state;
     return (
       <div className="row">
         <div className="col-lg-6">
           <Map
             markerList={_.values(markers)}
-            pathPoints={pathPoints}
+            pathPoints={_.reduce(
+                            segments,
+                            (pathPoints, segment) => _.concat(pathPoints, segment.path),
+                            []
+                       )}
             onMapClick={this.handleMapClick}
             onMarkerDblClick={this.removeMarker}
             onMarkerDragEnd={this.handleMarkerDragEnd}
