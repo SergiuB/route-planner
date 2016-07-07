@@ -14,7 +14,7 @@ export default class RoutePlanner extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      markerList: {},
+      markers: {},
       pathPoints: [],
       showProgressBar: false,
     };
@@ -37,8 +37,8 @@ export default class RoutePlanner extends Component {
   }
 
   async getPath() {
-    const { markerList } = this.state;
-    const points = _.values(markerList).map(
+    const { markers } = this.state;
+    const points = _.values(markers).map(
       ({ location }) => [location.lat, location.lng]
     );
     const pathPoints = await this.props.api.getDirections(points);
@@ -46,9 +46,9 @@ export default class RoutePlanner extends Component {
   }
 
   updateOrAddMarker({ id, location, address }) {
-    const { markerList } = this.state;
-    const newMarkerList = Object.assign({}, markerList, { [id]: { id, location, address } });
-    this.setState({ markerList: newMarkerList});
+    const { markers } = this.state;
+    const newMarkerList = Object.assign({}, markers, { [id]: { id, location, address } });
+    this.setState({ markers: newMarkerList});
   }
 
   async markerChange({ id, location }) {
@@ -68,9 +68,9 @@ export default class RoutePlanner extends Component {
   }
 
   removeMarker(id) {
-    const { markerList } = this.state;
-    const newMarkerList = _.omit(markerList, id);
-    this.setState({ markerList: newMarkerList});
+    const { markers } = this.state;
+    const newMarkerList = _.omit(markers, id);
+    this.setState({ markers: newMarkerList});
     return this.getPath();
   }
 
@@ -79,12 +79,12 @@ export default class RoutePlanner extends Component {
   }
 
   render() {
-    const { markerList, pathPoints, showProgressBar } = this.state;
+    const { markers, pathPoints, showProgressBar } = this.state;
     return (
       <div className="row">
         <div className="col-lg-6">
           <Map
-            markerList={_.values(markerList)}
+            markerList={_.values(markers)}
             pathPoints={pathPoints}
             onMapClick={this.handleMapClick}
             onMarkerDblClick={this.removeMarker}
@@ -93,7 +93,7 @@ export default class RoutePlanner extends Component {
         {showProgressBar && <LinearProgress mode="indeterminate" />}
         </div>
         <div className="col-lg-3">
-          {_.values(markerList).map(({ id, location, address }) => (
+          {_.values(markers).map(({ id, location, address }) => (
             <MarkerLocation
               id={id}
               key={id}
