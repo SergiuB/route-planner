@@ -109,7 +109,7 @@ export default class RoutePlanner extends Component {
         <div className="col-lg-3">
           <div className="segment-list">
             {_.times(markers.length - 1).map(idx => (
-              <SegmentDots segmentIdx={idx} segmentDistance={100} segmentElevation={500} />
+              <SegmentDots key={idx} segmentIdx={idx} segmentDistance={100} segmentElevation={500} />
             ))}
           </div>
           <div className="marker-list">
