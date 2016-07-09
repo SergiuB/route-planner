@@ -1,33 +1,18 @@
 import * as Actions from './actionConstants'
+import { geocodeLocation } from '../api/googleMap';
 
-export function setLanguage(language) {
+export function addMarker(location, address) {
   return {
-    language,
-    type: Actions.SET_LANGUAGE,
+    type: Actions.ADD_MARKER,
+    location,
+    address
   }
 }
 
-export function setReferenceCoordinates(refCoords) {
-  return {
-    refCoords,
-    type: Actions.SET_REFERENCE_COORDINATES,
-  }
-}
-
-export function setSelectedDate(date) {
-  return {
-    date,
-    type: Actions.SET_SELECTED_DATE,
-  }
-}
-
-export function showCalendar() {
-  return {
-    type: Actions.SHOW_CALENDAR,
-  }
-}
-export function hideCalendar() {
-  return {
-    type: Actions.HIDE_CALENDAR,
+export function addMarkerWithResolvedAddress({ getAddressForLocation = geocodeLocation } = {}) {
+  return location => async dispatch => {
+    const [lat, lng] = location;
+    const address = await getAddressForLocation({ lat, lng });
+    dispatch(addMarker(location, address));
   }
 }

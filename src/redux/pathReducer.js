@@ -18,6 +18,7 @@ export default function createPathReducer({ generateId = () => uuid.v4() } = {})
         const newMarker = {
           id: generateId(),
           location: action.location,
+          address: action.address,
         };
         return Object.assign({}, state, {
           markers: _.concat(markers, [newMarker]),
