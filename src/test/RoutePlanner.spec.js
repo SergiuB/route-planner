@@ -12,7 +12,7 @@ const apiMock = {
 };
 
 function createRoutePlanner() {
-  return <RoutePlanner api={apiMock} debounceTime={0} />;
+  return <RoutePlanner api={apiMock} />;
 }
 
 describe('<RoutePlanner />', () => {
@@ -69,7 +69,7 @@ describe('<RoutePlanner />', () => {
   it('updates the MarkerLocation component if a marker is dragged to a new location', async () => {
     const location = { lat: 1, lng: 1 };
     const newLocation = { lat: 2, lng: 2 };
-    const wrapper = shallow(<RoutePlanner api={apiMock} debounceTime={0} />);
+    const wrapper = shallow(createRoutePlanner());
     let mapWrapper = wrapper.find(Map);
 
     await mapWrapper.props().onMapClick(location)

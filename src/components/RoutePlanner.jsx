@@ -131,7 +131,6 @@ export default class RoutePlanner extends Component {
 
 RoutePlanner.propTypes = {
   api: React.PropTypes.object,
-  debounceTime: React.PropTypes.number,
 };
 
 RoutePlanner.defaultProps = {
@@ -139,5 +138,4 @@ RoutePlanner.defaultProps = {
     getDirections,
     geocodeLocation,
   },
-  debounceTime: 1000
 };
