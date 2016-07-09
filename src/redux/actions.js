@@ -32,3 +32,11 @@ export function addMarkerWithResolvedAddress({ getAddressForLocation = geocodeLo
     dispatch(addMarker(location, address));
   }
 }
+
+export function updateMarkerWithResolvedAddress({ getAddressForLocation = geocodeLocation } = {}) {
+  return (id, location) => async dispatch => {
+    const [lat, lng] = location;
+    const address = await getAddressForLocation({ lat, lng });
+    dispatch(updateMarkerLocation(id, location, address));
+  }
+}
