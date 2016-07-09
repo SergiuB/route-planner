@@ -66,6 +66,24 @@ describe('<RoutePlanner />', () => {
     expect(wrapper.find(MarkerLocation)).to.have.length(0);
   });
 
+  it(`removes the previously added MarkerLocation component
+    after clicking the remove button on the MarkerLocation`, async () => {
+    const location = { lat: 1, lng: 1 };
+    const wrapper = shallow(createRoutePlanner());
+    const mapWrapper = wrapper.find(Map);
+
+    await mapWrapper.props().onMapClick(location);
+    wrapper.update();
+
+    const mlWrapper = wrapper.find(MarkerLocation);
+    const mlId = mlWrapper.props().id;
+
+    mlWrapper.props().onRemove(mlId);
+    wrapper.update();
+
+    expect(wrapper.find(MarkerLocation)).to.have.length(0);
+  });
+
   it('updates the MarkerLocation component if a marker is dragged to a new location', async () => {
     const location = { lat: 1, lng: 1 };
     const newLocation = { lat: 2, lng: 2 };
