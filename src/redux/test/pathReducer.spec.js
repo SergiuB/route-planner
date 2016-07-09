@@ -46,4 +46,24 @@ describe('path reducer', () => {
       segments: [1, 2, 3],
     });
   });
+
+  it('handles UPDATE_MARKER_LOCATION', () => {
+    const pathReducer = createPathReducer();
+
+    const updateAction = actions.updateMarkerLocation(1, [2, 2], 'new address');
+
+    expect(pathReducer(undefined, updateAction))
+      .to.deep.equal({
+        markers: [],
+        segments: [],
+      });
+
+    expect(pathReducer({
+      markers: [{ id: 1, location: [1, 1], address: 'address' }, { id: 2 }, { id: 3 }],
+      segments: [1, 2, 3],
+    }, updateAction)).to.deep.equal({
+      markers: [{ id: 1, location: [2, 2], address: 'new address' }, { id: 2 }, { id: 3 }],
+      segments: [1, 2, 3],
+    });
+  });
 });
