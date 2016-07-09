@@ -5,7 +5,7 @@
   "main": "index.jsx",
   "scripts": {
     "start": "webpack-dev-server --hot --progress --inline --port 8090",
-    "test": "mocha -w src/test/helper.js **/test"
+    "test": "mocha -w src/test/helper.js server/test src/test src/redux/test"
   },
   "babel": {
     "presets": [
@@ -60,6 +60,9 @@
     "node-uuid": "^1.4.7",
     "polyline": "^0.2.0",
     "qs": "^6.2.0",
+    "react-redux": "^4.4.5",
+    "react-tap-event-plugin": "^1.0.0",
+    "redux": "^3.5.2",
     "whatwg-fetch": "^1.0.0"
   }
 }
