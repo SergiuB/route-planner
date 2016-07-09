@@ -1,11 +1,6 @@
-import configureMockStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
 import { expect } from 'chai';
 import createPathReducer from '../pathReducer';
 import * as actions from '../actions';
-import * as types from '../actionConstants';
-
-const mockStore = configureMockStore([thunk]);
 
 describe('path reducer', () => {
   it('returns the initial state', () => {
@@ -35,17 +30,20 @@ describe('path reducer', () => {
     });
   });
 
-  it('creates ADD_MARKER when marker address has been resolved', async () => {
-    const expectedActions = [
-      { type: types.ADD_MARKER, location: [1, 1], address: 'address' },
-    ];
-    const store = mockStore({ markers: [], segments: [] });
+  it('handles REMOVE_MARKER', () => {
+    const pathReducer = createPathReducer();
 
-    const addMarker = actions.addMarkerWithResolvedAddress({
-      getAddressForLocation: () => Promise.resolve('address')
-    })
+    expect(pathReducer(undefined, actions.removeMarker(1))).to.deep.equal({
+      markers: [],
+      segments: [],
+    });
 
-    await store.dispatch(addMarker([1, 1]));
-    expect(store.getActions()).to.deep.equal(expectedActions);
+    expect(pathReducer({
+      markers: [{ id: 1 }, { id: 2 }, { id: 3 }],
+      segments: [1, 2, 3],
+    }, actions.removeMarker(2))).to.deep.equal({
+      markers: [{ id: 1 }, { id: 3 }],
+      segments: [1, 2, 3],
+    });
   });
 });

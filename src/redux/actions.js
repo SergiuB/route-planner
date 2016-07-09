@@ -9,6 +9,13 @@ export function addMarker(location, address) {
   }
 }
 
+export function removeMarker(id) {
+  return {
+    type: Actions.REMOVE_MARKER,
+    id,
+  }
+}
+
 export function addMarkerWithResolvedAddress({ getAddressForLocation = geocodeLocation } = {}) {
   return location => async dispatch => {
     const [lat, lng] = location;

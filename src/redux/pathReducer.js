@@ -2,7 +2,7 @@
 
 import uuid from 'node-uuid';
 import _ from 'lodash';
-import { ADD_MARKER } from './actionConstants';
+import * as types from './actionConstants';
 
 
 const initialState = {
@@ -12,9 +12,9 @@ const initialState = {
 
 export default function createPathReducer({ generateId = () => uuid.v4() } = {}) {
   return function path(state = initialState, action) {
+    const { markers } = state;
     switch (action.type) {
-      case ADD_MARKER:
-        const { markers } = state;
+      case types.ADD_MARKER:
         const newMarker = {
           id: generateId(),
           location: action.location,
@@ -22,6 +22,10 @@ export default function createPathReducer({ generateId = () => uuid.v4() } = {})
         };
         return Object.assign({}, state, {
           markers: _.concat(markers, [newMarker]),
+        });
+      case types.REMOVE_MARKER:
+        return Object.assign({}, state, {
+          markers: _.reject(markers, ({ id }) => id === action.id),
         });
       default:
         return state;
