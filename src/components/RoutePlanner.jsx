@@ -107,10 +107,12 @@ export default class RoutePlanner extends Component {
         {showProgressBar && <LinearProgress mode="indeterminate" />}
         </div>
         <div className="col-lg-3">
-          <div className="marker-list">
+          <div className="segment-list">
             {_.times(markers.length - 1).map(idx => (
               <SegmentDots segmentIdx={idx} segmentDistance={100} segmentElevation={500} />
             ))}
+          </div>
+          <div className="marker-list">
             {markers.map(({ id, location, address }) => (
               <MarkerLocation
                 id={id}

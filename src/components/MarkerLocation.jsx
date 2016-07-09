@@ -24,7 +24,12 @@ export default class MarkerLocation extends React.Component {
       <FontIcon
         className="material-icons"
         color={grey500}
-        style={{ fontSize: 18 }}
+        style={{
+          fontSize: 18,
+          position: 'absolute',
+          top: 15,
+          left: -20,
+        }}
       >
         drag_handle
       </FontIcon>

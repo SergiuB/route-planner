@@ -11,24 +11,28 @@ html,body{
 
 .marker-list {
   position: relative;
+  margin-left: 32px;
 }
 
 .marker-location {
   display: flex;
 
   .preamble {
-    width: 60px;
     margin-right: 25px;
     margin-left: 10px;
     display: flex;
-    justify-content: flex-end;
     align-items: center;
+    position: relative;
   }
+}
+
+.segment-list {
+  float: left;
+  position: relative;
 }
 
 .segment-dots {
   position: absolute;
-  left: -14px;
   height: 35px;
   width: 50px;
   font-size: 10px;
