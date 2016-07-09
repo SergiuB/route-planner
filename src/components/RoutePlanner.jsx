@@ -44,6 +44,7 @@ export default class RoutePlanner extends Component {
     );
     const segmentPaths = await this.props.api.getDirections(points);
     const segments = segmentPaths.map((path, idx) => ({
+      id: `${markers[idx].id}_${markers[idx+1].id}`,
       startMarkerId: markers[idx].id,
       endMarkerId: markers[idx+1].id,
       path
@@ -108,8 +109,8 @@ export default class RoutePlanner extends Component {
         </div>
         <div className="col-lg-3">
           <div className="segment-list">
-            {_.times(markers.length - 1).map(idx => (
-              <SegmentDots key={idx} segmentIdx={idx} segmentDistance={100} segmentElevation={500} />
+            {segments.map(({ id }, index) => (
+              <SegmentDots key={id} segmentIdx={index} segmentDistance={100} segmentElevation={500} />
             ))}
           </div>
           <div className="marker-list">
