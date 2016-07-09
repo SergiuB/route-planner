@@ -21,8 +21,8 @@ describe('<RoutePlanner />', () => {
     expect(wrapper.find(Map)).to.have.length(1);
   });
 
-  it(`renders a MarkerLocation component at the right location and with right address
-    after click on map`, async () => {
+  it('renders a MarkerLocation component at the right location and with right address ' +
+    'after click on map', async () => {
     const location = { lat: 1, lng: 1 };
     const wrapper = shallow(createRoutePlanner());
 
@@ -35,8 +35,8 @@ describe('<RoutePlanner />', () => {
     expect(mlWrapper.props().address).to.equal('Address11');
   });
 
-  it(`renders a Map component with one marker data object in markers prop
-    after click on map`, async () => {
+  it('renders a Map component with one marker data object in markers prop ' +
+    'after click on map', async () => {
     const location = { lat: 1, lng: 1 };
     const wrapper = shallow(createRoutePlanner());
     let mapWrapper = wrapper.find(Map);
@@ -49,8 +49,8 @@ describe('<RoutePlanner />', () => {
     expect(markerData.location).to.equal(location);
   });
 
-  it(`removes the previously added MarkerLocation component
-    after double clicking the marker on map`, async () => {
+  it('removes the previously added MarkerLocation component ' +
+    'after double clicking the marker on map', async () => {
     const location = { lat: 1, lng: 1 };
     const wrapper = shallow(createRoutePlanner());
     const mapWrapper = wrapper.find(Map);
@@ -66,8 +66,8 @@ describe('<RoutePlanner />', () => {
     expect(wrapper.find(MarkerLocation)).to.have.length(0);
   });
 
-  it(`removes the previously added MarkerLocation component
-    after clicking the remove button on the MarkerLocation`, async () => {
+  it('removes the previously added MarkerLocation component ' +
+    'after clicking the remove button on the MarkerLocation', async () => {
     const location = { lat: 1, lng: 1 };
     const wrapper = shallow(createRoutePlanner());
     const mapWrapper = wrapper.find(Map);
