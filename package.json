@@ -5,7 +5,7 @@
   "main": "index.jsx",
   "scripts": {
     "start": "webpack-dev-server --hot --progress --inline --port 8090",
-    "test": "mocha src/test/helper.js **/test/*.spec.js*"
+    "test": "mocha -w src/test/helper.js **/test"
   },
   "babel": {
     "presets": [
