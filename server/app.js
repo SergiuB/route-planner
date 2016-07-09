@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const _ = require('lodash');
-const gmapsService = require('./gmapsService');
+const gmapsService = require('./services/gmapsService');
 
 app.use(bodyParser.json());
 
@@ -15,7 +15,6 @@ app.get('/api/directions', (req, res) => {
     .catch(error => {
       console.log(error);
     });
-
 });
 
 app.listen(3000, () => {

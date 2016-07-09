@@ -2,12 +2,13 @@ import React, { Component } from 'react';
 import LinearProgress from 'material-ui/LinearProgress';
 import uuid from 'node-uuid';
 import _ from 'lodash';
+import debounce from 'es6-promise-debounce';
 
 import Map from './Map';
 import MarkerLocation from './MarkerLocation';
 import SegmentDots from './SegmentDots';
 
-import * as directionsApi from '../api/directions';
+import { getDirections } from '../api/directions';
 import { geocodeLocation } from '../api/googleMap';
 
 export default class RoutePlanner extends Component {
@@ -15,66 +16,90 @@ export default class RoutePlanner extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      markerList: {},
-      pathPoints: [],
+      markers: [],
+      segments: [],
       showProgressBar: false,
     };
-    this.handleMapClick = this.handleMapClick.bind(this);
-    this.removeMarker = this.removeMarker.bind(this);
-    this.handleMarkerDragEnd = this.handleMarkerDragEnd.bind(this);
-    this.getPath = _.debounce(this.getPath.bind(this), 1000);
+    this.handleMapClick = this.executeWithProgress(this.handleMapClick);
+    this.removeMarker = this.executeWithProgress(this.removeMarker);
+    this.handleMarkerDragEnd = this.executeWithProgress(this.handleMarkerDragEnd);
+
+    this.getPath = this.getPath.bind(this);
   }
 
-  getPath() {
-    const { markerList } = this.state;
-    const points = _.values(markerList).map(
-      ({ location }) => [location.lat(), location.lng()]
+  executeWithProgress(fn) {
+    return async (...params) => {
+      this.setState({ showProgressBar: true });
+      try {
+        await fn.apply(this, params);
+      } finally {
+        this.setState({ showProgressBar: false });
+      }
+    }
+  }
+
+  async getPath(markers) {
+    const points = markers.map(
+      ({ location }) => [location.lat, location.lng]
     );
-    directionsApi.getDirections(points)
-      .then((result) => this.setState({ pathPoints: result, showProgressBar: false }));
+    const segmentPaths = await this.props.api.getDirections(points);
+    const segments = segmentPaths.map((path, idx) => ({
+      startMarkerId: markers[idx].id,
+      endMarkerId: markers[idx+1].id,
+      path
+    }));
+    this.setState({ segments });
   }
 
   updateOrAddMarker({ id, location, address }) {
-    const { markerList } = this.state;
-    const newMarkerList = Object.assign({}, markerList, { [id]: { id, location, address } });
-    this.setState({ markerList: newMarkerList, showProgressBar: true });
+    const { markers } = this.state;
+    const newMarkers = markers.slice();
+    const existingMarker = _.find(newMarkers, { id });
+    existingMarker
+      ? Object.assign(existingMarker, { location, address })
+      : newMarkers.push({ id, location, address });
+    this.setState({ markers: newMarkers});
   }
 
-  markerChange({ id, location }) {
-    geocodeLocation({ lat: location.lat(), lng: location.lng() })
-      .then(address => {
-        this.updateOrAddMarker({ id, location, address });
-      })
-      .catch(() => {
-        this.updateOrAddMarker({ id, location });
-      });
-    this.getPath();
+  async markerChange({ id, location }) {
+    try {
+      const address = await this.props.api.geocodeLocation({ lat: location.lat, lng: location.lng });
+      this.updateOrAddMarker({ id, location, address });
+    }
+    catch (error) {
+      this.updateOrAddMarker({ id, location });
+    };
+    return this.getPath(this.state.markers);
   }
 
   handleMapClick(location) {
     const id = uuid.v4();
-    this.markerChange({ id, location });
+    return this.markerChange({ id, location });
   }
 
   removeMarker(id) {
-    const { markerList } = this.state;
-    const newMarkerList = _.omit(markerList, id);
-    this.setState({ markerList: newMarkerList, showProgressBar: true });
-    this.getPath();
+    const { markers } = this.state;
+    const newMarkers = _.reject(markers, { id });
+    this.setState({ markers: newMarkers});
+    return this.getPath(newMarkers);
   }
 
   handleMarkerDragEnd(id, location) {
-    this.markerChange({ id, location });
+    return this.markerChange({ id, location });
   }
 
   render() {
-    const { markerList, pathPoints, showProgressBar } = this.state;
+    const { markers, segments, showProgressBar } = this.state;
     return (
       <div className="row">
         <div className="col-lg-6">
           <Map
-            markerList={_.values(markerList)}
-            pathPoints={pathPoints}
+            markers={markers}
+            path={_.reduce(
+                            segments,
+                            (path, segment) => _.concat(path, segment.path),
+                            []
+                       )}
             onMapClick={this.handleMapClick}
             onMarkerDblClick={this.removeMarker}
             onMarkerDragEnd={this.handleMarkerDragEnd}
@@ -83,10 +108,10 @@ export default class RoutePlanner extends Component {
         </div>
         <div className="col-lg-3">
           <div className="marker-list">
-            {_.times(_.values(markerList).length - 1).map(idx => (
+            {_.times(markers.length - 1).map(idx => (
               <SegmentDots segmentIdx={idx} segmentDistance={100} segmentElevation={500} />
             ))}
-            {_.values(markerList).map(({ id, location, address }) => (
+            {markers.map(({ id, location, address }) => (
               <MarkerLocation
                 id={id}
                 key={id}
@@ -101,3 +126,16 @@ export default class RoutePlanner extends Component {
     );
   }
 }
+
+RoutePlanner.propTypes = {
+  api: React.PropTypes.object,
+  debounceTime: React.PropTypes.number,
+};
+
+RoutePlanner.defaultProps = {
+  api: {
+    getDirections,
+    geocodeLocation,
+  },
+  debounceTime: 1000
+};

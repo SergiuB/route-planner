@@ -4,24 +4,27 @@
   "private": true,
   "main": "index.jsx",
   "scripts": {
-    "start": "webpack-dev-server --hot --progress --inline --port 8090"
+    "start": "webpack-dev-server --hot --progress --inline --port 8090",
+    "test": "mocha src/test/helper.js **/test/*.spec.js*"
   },
   "babel": {
     "presets": [
       "es2015",
-      "react"
-    ],
-    "plugins": ["transform-object-rest-spread"]
+      "react",
+      "stage-2"
+    ]
   },
   "devDependencies": {
     "babel-core": "^6.9.1",
     "babel-loader": "^6.2.4",
-    "babel-plugin-transform-object-rest-spread": "^6.8.0",
     "babel-polyfill": "^6.9.1",
     "babel-preset-es2015": "^6.9.0",
     "babel-preset-react": "^6.5.0",
+    "babel-preset-stage-2": "^6.11.0",
     "babel-register": "^6.9.0",
+    "chai": "^3.5.0",
     "css-loader": "^0.23.1",
+    "enzyme": "^2.3.0",
     "eslint": "^2.13.1",
     "eslint-config-airbnb": "^9.0.1",
     "eslint-plugin-babel": "^3.2.0",
@@ -32,9 +35,11 @@
     "html-webpack-plugin": "^2.19.0",
     "json-loader": "^0.5.4",
     "lodash": "^4.13.1",
+    "mocha": "^2.5.3",
     "node-sass": "^3.7.0",
-    "react": "^15.1.0",
-    "react-dom": "^15.1.0",
+    "react": "^15.2.0",
+    "react-addons-test-utils": "^15.2.0",
+    "react-dom": "^15.2.0",
     "react-hot-loader": "^1.3.0",
     "react-router": "^2.4.1",
     "sass-loader": "^3.2.0",
@@ -46,6 +51,7 @@
   "dependencies": {
     "body-parser": "^1.15.2",
     "bootstrap-grid": "^2.0.1",
+    "es6-promise-debounce": "^1.0.1",
     "express": "^4.14.0",
     "fontawesome-markers": "^4.6.1",
     "geolib": "^2.0.21",

@@ -1,6 +1,8 @@
 {
   "extends": "airbnb",
   "globals": {
-    "google": true
+    "google": true,
+    "describe": true,
+    "it": true,
   },
 }

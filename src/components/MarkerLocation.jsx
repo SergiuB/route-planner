@@ -7,8 +7,8 @@ import { red500, grey500, yellow500 } from 'material-ui/styles/colors';
 
 const COORD_DECIMAL_PLACES = 5;
 const formatCoord = number => number.toFixed(COORD_DECIMAL_PLACES);
-const locationToString = location =>
-  `${formatCoord(location.lat())}, ${formatCoord(location.lng())}`;
+const locationToString = ({ lat, lng }) =>
+  `${formatCoord(lat)}, ${formatCoord(lng)}`;
 
 export default class MarkerLocation extends React.Component {
   constructor(props) {
@@ -56,7 +56,7 @@ export default class MarkerLocation extends React.Component {
           value={address || locationToString(location)}
           fullWidth
         />
-        <IconButton touch onClick={() => onRemove(id)}>
+        <IconButton onClick={() => onRemove(id)}>
           <FontIcon className="material-icons" color={red500}>clear</FontIcon>
         </IconButton>
       </div>
