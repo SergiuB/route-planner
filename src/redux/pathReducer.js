@@ -8,11 +8,12 @@ import * as types from './actionConstants';
 const initialState = {
   markers: [],
   segments: [],
+  opsInProgress: 0,
 };
 
 export default function createPathReducer({ generateId = () => uuid.v4() } = {}) {
   return function path(state = initialState, action) {
-    const { markers, segments } = state;
+    const { markers, segments, opsInProgress } = state;
     switch (action.type) {
 
       case types.ADD_MARKER:
@@ -77,6 +78,18 @@ export default function createPathReducer({ generateId = () => uuid.v4() } = {})
           ...state,
           segments: segmentsCopy,
         };
+
+      case types.OPERATION_STARTED:
+        return {
+          ...state,
+          opsInProgress: opsInProgress + 1,
+        }
+
+      case types.OPERATION_DONE:
+        return {
+          ...state,
+          opsInProgress: Math.max(0, opsInProgress - 1),
+        }
 
       default:
         return state;

@@ -88,3 +88,15 @@ export function updateSegment({ getPath = getDirections } = {}) {
     dispatch(updateSegmentSync(segmentId, path));
   }
 }
+
+export function operationStarted() {
+  return {
+    type: Actions.OPERATION_STARTED
+  }
+}
+
+export function operationDone() {
+  return {
+    type: Actions.OPERATION_DONE
+  }
+}
