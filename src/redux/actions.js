@@ -30,17 +30,27 @@ export function updateMarkerSync(id, location, address) {
 
 export function addMarker({ getAddressForLocation = geocodeLocation } = {}) {
   return location => async dispatch => {
+    dispatch(operationStarted());
     const [lat, lng] = location;
-    const address = await getAddressForLocation({ lat, lng });
-    dispatch(addMarkerSync(location, address));
+    try {
+      const address = await getAddressForLocation({ lat, lng });
+      dispatch(addMarkerSync(location, address));
+    } finally {
+      dispatch(operationDone());
+    }
   }
 }
 
 export function updateMarker({ getAddressForLocation = geocodeLocation } = {}) {
   return (id, location) => async dispatch => {
+    dispatch(operationStarted());
     const [lat, lng] = location;
-    const address = await getAddressForLocation({ lat, lng });
-    dispatch(updateMarkerSync(id, location, address));
+    try {
+      const address = await getAddressForLocation({ lat, lng });
+      dispatch(updateMarkerSync(id, location, address));
+    } finally {
+      dispatch(operationDone());
+    }
   }
 }
 
@@ -70,22 +80,32 @@ export function updateSegmentSync(id, path) {
 
 export function addSegment({ getPath = getDirections } = {}) {
   return (startMarkerId, endMarkerId) => async (dispatch, getState) => {
+    dispatch(operationStarted());
     const { markers } = getState();
     const startMarker = _.find(markers, ({ id }) => id === startMarkerId);
     const endMarker = _.find(markers, ({ id }) => id === endMarkerId);
-    const path = await getPath([ startMarker.location, endMarker.location ]);
-    dispatch(addSegmentSync(startMarkerId, endMarkerId, path));
+    try {
+      const path = await getPath([ startMarker.location, endMarker.location ]);
+      dispatch(addSegmentSync(startMarkerId, endMarkerId, path));
+    } finally {
+      dispatch(operationDone());
+    }
   }
 }
 
 export function updateSegment({ getPath = getDirections } = {}) {
   return (segmentId) => async (dispatch, getState) => {
+    dispatch(operationStarted());
     const [startMarkerId, endMarkerId] = segmentId.split('_');
     const { markers } = getState();
     const startMarker = _.find(markers, ({ id }) => id === startMarkerId);
     const endMarker = _.find(markers, ({ id }) => id === endMarkerId);
-    const path = await getPath([ startMarker.location, endMarker.location ]);
-    dispatch(updateSegmentSync(segmentId, path));
+    try {
+      const path = await getPath([ startMarker.location, endMarker.location ]);
+      dispatch(updateSegmentSync(segmentId, path));
+    } finally {
+      dispatch(operationDone());
+    }
   }
 }
 

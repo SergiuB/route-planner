@@ -10,7 +10,9 @@ const mockStore = configureMockStore([thunk]);
 describe('addMarker', () => {
   it('creates ADD_MARKER when marker address has been resolved', async () => {
     const expectedActions = [
+      { type: types.OPERATION_STARTED},
       { type: types.ADD_MARKER, location: [1, 1], address: 'address' },
+      { type: types.OPERATION_DONE},
     ];
     const store = mockStore({ markers: [], segments: [] });
 
@@ -26,7 +28,9 @@ describe('addMarker', () => {
 describe('updateMarker', () => {
   it('creates UPDATE_MARKER when marker address has been resolved', async () => {
     const expectedActions = [
+      { type: types.OPERATION_STARTED},
       { type: types.UPDATE_MARKER, id: 1, location: [2, 2], address: 'new address' },
+      { type: types.OPERATION_DONE},
     ];
     const store = mockStore({ markers: [], segments: [] });
 
@@ -42,7 +46,9 @@ describe('updateMarker', () => {
 describe('addSegment', () => {
   it('creates ADD_SEGMENT when segment path has been determined', async () => {
     const expectedActions = [
+      { type: types.OPERATION_STARTED},
       { type: types.ADD_SEGMENT, startMarkerId: 1, endMarkerId: 2, path: [[1, 1], [2, 2]] },
+      { type: types.OPERATION_DONE},
     ];
     const store = mockStore({ markers: [{ id: 1, location: [1, 1] }, { id: 2, location: [2, 2]}], segments: [] });
 
@@ -58,7 +64,9 @@ describe('addSegment', () => {
 describe('updateSegment', () => {
   it('creates UPDATE_SEGMENT when segment path has been determined', async () => {
     const expectedActions = [
+      { type: types.OPERATION_STARTED},
       { type: types.UPDATE_SEGMENT, id: '1_2', path: [[1, 1], [3, 3]] },
+      { type: types.OPERATION_DONE},
     ];
     const store = mockStore({
       markers: [{ id: '1', location: [1, 1] }, { id: '2', location: [3, 3]}],
