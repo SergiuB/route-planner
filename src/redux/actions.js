@@ -18,7 +18,7 @@ export function removeMarkerSync(id) {
 
 export function updateMarkerSync(id, location, address) {
   return {
-    type: Actions.UPDATE_MARKER_LOCATION,
+    type: Actions.UPDATE_MARKER,
     id,
     location,
     address
@@ -38,5 +38,14 @@ export function updateMarker({ getAddressForLocation = geocodeLocation } = {}) {
     const [lat, lng] = location;
     const address = await getAddressForLocation({ lat, lng });
     dispatch(updateMarkerSync(id, location, address));
+  }
+}
+
+export function addSegmentSync(startMarkerId, endMarkerId, path) {
+  return {
+    type: Actions.ADD_SEGMENT,
+    startMarkerId,
+    endMarkerId,
+    path
   }
 }

@@ -24,9 +24,9 @@ describe('addMarker', () => {
 });
 
 describe('updateMarker', () => {
-  it('creates UPDATE_MARKER_LOCATION when marker address has been resolved', async () => {
+  it('creates UPDATE_MARKER when marker address has been resolved', async () => {
     const expectedActions = [
-      { type: types.UPDATE_MARKER_LOCATION, id: 1, location: [2, 2], address: 'new address' },
+      { type: types.UPDATE_MARKER, id: 1, location: [2, 2], address: 'new address' },
     ];
     const store = mockStore({ markers: [], segments: [] });
 

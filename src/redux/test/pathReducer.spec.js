@@ -66,4 +66,34 @@ describe('path reducer', () => {
       segments: [1, 2, 3],
     });
   });
+
+  it('handles ADD_SEGMENT', () => {
+    const pathReducer = createPathReducer();
+
+    const addSegmentAction = actions.addSegmentSync(1, 2, [[1, 1], [2, 2]]);
+
+    expect(pathReducer(undefined, addSegmentAction))
+      .to.deep.equal({
+        markers: [],
+        segments: [{
+          id: '1_2',
+          startMarkerId: 1,
+          endMarkerId: 2,
+          path: [[1, 1], [2, 2]],
+        }],
+      });
+
+    expect(pathReducer({
+      markers: [1, 2],
+      segments: [{ id: 1 }, { id: 2 }, { id: 3 }],
+    }, addSegmentAction)).to.deep.equal({
+      markers: [1, 2],
+      segments: [{ id: 1 }, { id: 2 }, { id: 3 }, {
+        id: '1_2',
+        startMarkerId: 1,
+        endMarkerId: 2,
+        path: [[1, 1], [2, 2]],
+      }],
+    });
+  });
 });

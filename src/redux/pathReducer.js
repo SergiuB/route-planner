@@ -12,7 +12,7 @@ const initialState = {
 
 export default function createPathReducer({ generateId = () => uuid.v4() } = {}) {
   return function path(state = initialState, action) {
-    const { markers } = state;
+    const { markers, segments } = state;
     switch (action.type) {
 
       case types.ADD_MARKER:
@@ -34,7 +34,7 @@ export default function createPathReducer({ generateId = () => uuid.v4() } = {})
                     .map(m => ({ ...m })),
         };
 
-      case types.UPDATE_MARKER_LOCATION:
+      case types.UPDATE_MARKER:
         const markersCopy = markers.map(m => ({ ...m }));
         const marker = _.find(markersCopy, ({ id }) => id === action.id);
         if (marker) {
@@ -44,6 +44,20 @@ export default function createPathReducer({ generateId = () => uuid.v4() } = {})
         return {
           ...state,
           markers: markersCopy,
+        };
+
+      case types.ADD_SEGMENT:
+        const { startMarkerId, endMarkerId, path } = action;
+        const newSegment = {
+          id: `${startMarkerId}_${endMarkerId}`,
+          startMarkerId,
+          endMarkerId,
+          path
+        };
+        return {
+          ...state,
+          segments: _.concat(segments, [newSegment])
+                    .map(m => ({ ...m })),
         };
 
       default:
