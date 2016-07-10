@@ -1,37 +1,136 @@
-const _ = require('lodash');
-const directionsService = require('../services/gmapsService');
+/* eslint func-names: 0, prefer-arrow-callback: 0 */
+
+const createMapService = require('../services/gmapsService');
+const polylineApi = { decode: x => x };
 const expect = require('chai').expect;
+const _ = require('lodash');
 
-describe('GmapsService', () => {
-  it('returns a path between multiple locations', (done) => {
-    directionsService.getPath(['Bucharest, Romania', 'Chisinau, Moldavia', 'Moscow, Russia'])
-      .then(([firstSegment, secondSegment, ...otherSegments]) => {
-        expect(otherSegments.length).to.be.empty;
+describe('gmapsService', function () {
 
-        const firstPoint = _.first(firstSegment);
-        const midPoint = _.first(secondSegment);
-        const lastPoint = _.last(secondSegment);
-        const [expectedFirstPoint, expectedMidPoint, expectedLastPoint] = [
-          [44.42659, 26.10278], [47.00979, 28.86264], [55.75615, 37.6172]];
+  it('returns a path between ten coordinates', async function () {
+    const gmapsService = createMapService({
+      mapsApi: {
+        directions: ({origin, destination}, fn) => fn(null, {
+          status: 'OK',
+          routes: [{
+            legs: [{
+              steps: [{
+                polyline: {
+                  points: [
+                    origin.split(',').map(parseFloat),
+                    destination.split(',').map(parseFloat)]
+                }
+              }]
+            }]
+          }]
+        })
+      },
+      polylineApi
+    });
 
-        expect(firstPoint).to.deep.equal(expectedFirstPoint);
-        expect(midPoint).to.deep.equal(expectedMidPoint);
-        expect(lastPoint).to.deep.equal(expectedLastPoint);
-        done();
-      })
-      .catch(done);
+    const points = _.times(10, x => [x, x]);
+    const path = await gmapsService.getPath({ points });
+
+    const pointPairs = points.map((value, index) => [points[index - 1], value]);
+    const [, ...expectedPaths] = pointPairs;
+
+    expect(path).to.deep.equal(expectedPaths);
   });
 
-  it('returns elevations for given points', (done) => {
-    // urcare Transfagarasan
-    directionsService.getPath(['45.56977227, 24.61139202', '45.59476204 , 24.62010384'])
-      .then(paths => paths[0])
-      .then(directionsService.getElevations)
-      .then(elevations => {
-        expect(elevations).to.be.an('Array');
-        expect(_.last(elevations)).to.be.above(2000);
+  it('returns empty path if no route is found between two coordinates', async function () {
+    const gmapsService = createMapService({
+      mapsApi: {
+        directions: (_, fn) => fn(undefined, { status: 'ZERO_RESULTS' })
+      },
+      polylineApi
+    });
+
+    const path = await gmapsService.getPath({ points: [[], []] });
+
+    expect(path).to.deep.equal([[]]);
+  });
+
+  it('throws error if API returns status not ok', function (done) {
+    const gmapsService = createMapService({
+      mapsApi: {
+        directions: (_, fn) => fn(undefined, { status: 'STATUS_ERROR' })
+      },
+      polylineApi
+    });
+
+    gmapsService.getPath({ points: [[], []] })
+      .catch(err => {
+        expect(err.message).to.equal('STATUS_ERROR');
         done();
-      })
-      .catch(done);
+      });
+  });
+
+  it('throws error if API returns error', function (done) {
+    const gmapsService = createMapService({
+      mapsApi: {
+        directions: (_, fn) => fn('error', undefined)
+      },
+      polylineApi
+    });
+
+    gmapsService.getPath({ points: [[], []] })
+      .catch(err => {
+        expect(err).to.equal('error');
+        done();
+      });
+  });
+
+  it('returns elevation for given locations while splitting the elevation API calls ' +
+    'so each call requests elevations for a maximum number of points', async function () {
+    const points = _.times(10, x => [x, x]);
+    const expectedElevations = _.times(10);
+    let apiCallCount = 0;
+    const gmapsService = createMapService({
+      mapsApi: {
+        elevations: ({ locations }, fn) => {
+          apiCallCount++;
+          fn(null, {
+            status: 'OK',
+            results: locations
+                      .split('|')
+                      .map(lStr => lStr.split(','))
+                      .map(([lat, lng]) => ({ elevation: parseFloat(lat) }))
+          });
+        }
+      }
+    });
+
+    const elevations = await gmapsService.getElevations({ points,  maxPointsPerRequest: 2 });
+
+    expect(elevations).to.deep.equal(expectedElevations);
+    expect(apiCallCount).to.equal(5);
+  });
+
+  it('throws error if elevations API returns status not ok', function (done) {
+    const gmapsService = createMapService({
+      mapsApi: {
+        elevations: (_, fn) => fn(null, { status: 'STATUS_ERROR' })
+      },
+    });
+
+    gmapsService.getElevations({ points: [[], []] })
+      .catch(err => {
+        expect(err.message).to.equal('STATUS_ERROR');
+        done();
+      });
+  });
+
+  it('throws error if API returns error', function (done) {
+    const gmapsService = createMapService({
+      mapsApi: {
+        elevations: (_, fn) => fn('error', undefined)
+      },
+    });
+
+    gmapsService.getElevations({ points: [[], []] })
+      .catch(err => {
+        expect(err).to.equal('error');
+        done();
+      });
   });
 });

@@ -1,80 +1,71 @@
-const { gmaps } = require('../config');
-const GoogleMapsAPI = require('googlemaps');
-const polyline = require('polyline');
-const geolib = require('geolib');
 const _ = require('lodash');
-const gm = new GoogleMapsAPI(gmaps);
 
-const LOCATIONS_PER_REQUEST = 300;
-
-function getDistances(points) {
-  return points.map((point, index, all) => {
-    if (index === 0) { return 0; }
-    const [prevLat, prevLong] = all[index - 1];
-    const [lat, long] = point;
-    return geolib.getDistance(
-      { latitude: lat, longitude: long },
-      { latitude: prevLat, longitude: prevLong }
-    );
-  });
-}
-
-function getFullPath(route) {
-  let fullPath = [];
-  for (const leg of route.legs) {
-    for (const step of leg.steps) {
-      fullPath = fullPath.concat(polyline.decode(step.polyline.points));
+module.exports = ({ mapsApi, polylineApi }) => {
+  function getFullPath(route) {
+    let fullPath = [];
+    for (const leg of route.legs) {
+      for (const step of leg.steps) {
+        fullPath = fullPath.concat(polylineApi.decode(step.polyline.points));
+      }
     }
+    return fullPath;
   }
-  return fullPath;
-}
 
-function getPathBetweenTwoLocations({ origin, destination }) {
-  return new Promise((resolve, reject) => {
-    gm.directions({ origin, destination }, (error, result) => {
-      if (error) {
-        reject(error);
-      } else if (result.status !== 'OK') {
-        reject(result.status);
-      } else {
-        const [firstRoute] = result.routes;
-        const points = getFullPath(firstRoute);
-        resolve(points);
-      }
+  function getPathTwoPoints([origin, destination]) {
+    return new Promise((resolve, reject) => {
+      const originFmtd = origin.join(',');
+      const destinationFmtd = destination.join(',');
+      mapsApi.directions({
+        origin: originFmtd,
+        destination: destinationFmtd,
+      }, (error, { status, routes } = {}) => {
+        if (error) {
+          reject(error);
+        } else if (status === 'ZERO_RESULTS') {
+          resolve([]);
+        } else if (status !== 'OK') {
+          reject(new Error(status));
+        } else {
+          resolve(getFullPath(routes[0]));
+        }
+      });
     });
-  });
-}
+  }
 
-exports.getPath = (locations) => {
-  const locationPairs = locations.map((value, index) =>
-    ({ origin: locations[index - 1], destination: value }));
-  const [, ...validPairs] = locationPairs;
-  const pathPromises = validPairs.map(getPathBetweenTwoLocations);
-  return new Promise((resolve, reject) => {
-    Promise.all(pathPromises)
-      .then(resolve)
-      .catch(reject);
-  });
+  function getPath({ points }) {
+    const pointPairs = points.map((value, index) => [points[index - 1], value]);
+    const [, ...validPairs] = pointPairs;
+    const pathPromises = validPairs.map(getPathTwoPoints);
+    return new Promise((resolve, reject) => {
+      Promise.all(pathPromises)
+        .then(resolve)
+        .catch(reject);
+    });
+  }
+
+  function getElevationsSingleRequest(points) {
+    return new Promise((resolve, reject) => {
+      const locations = points.map(point => point.join(',')).join('|');
+      mapsApi.elevations({ locations }, (error, { status, results } = {}) => {
+        if (error) {
+          reject(error);
+        } else if (status !== 'OK') {
+          reject(new Error(status));
+        } else {
+          resolve(results.map(r => r.elevation));
+        }
+      });
+    });
+  }
+
+  function getElevations({ points, maxPointsPerRequest = 300 }) {
+    return new Promise((resolve, reject) => {
+      const chunks = _.chunk(points, maxPointsPerRequest);
+      Promise.all(chunks.map(getElevationsSingleRequest))
+        .then(elevationChunks => resolve(_.concat.apply(null, elevationChunks)))
+        .catch(reject);
+    });
+  }
+
+  return { getPath, getElevations };
 };
-
-function getElevationsSingleRequest(points) {
-  return new Promise((resolve, reject) => {
-    const locations = points.map(point => point.join(',')).join('|');
-    gm.elevationFromLocations({ locations }, (error, result) => {
-      if (error) {
-        reject(error);
-      } else if (result.status !== 'OK') {
-        reject(result.status);
-      } else {
-        resolve(result.results.map(r => r.elevation));
-      }
-    });
-  });
-}
-
-exports.getElevations = (points) => new Promise((resolve, reject) => {
-  const chunks = _.chunk(points, LOCATIONS_PER_REQUEST);
-  Promise.all(chunks.map(getElevationsSingleRequest))
-    .then(elevationChunks => resolve(_.concat.apply(null, elevationChunks)))
-    .catch(reject);
-});
