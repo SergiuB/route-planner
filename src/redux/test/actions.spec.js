@@ -38,3 +38,19 @@ describe('updateMarker', () => {
     expect(store.getActions()).to.deep.equal(expectedActions);
   });
 });
+
+describe('addSegment', () => {
+  it('creates ADD_SEGMENT when segment path has been determined', async () => {
+    const expectedActions = [
+      { type: types.ADD_SEGMENT, startMarkerId: 1, endMarkerId: 2, path: [[1, 1], [2, 2]] },
+    ];
+    const store = mockStore({ markers: [{ id: 1, location: [1, 1] }, { id: 2, location: [2, 2]}], segments: [] });
+
+    const addSegment = actions.addSegment({
+      getPath: ([a, b]) => Promise.resolve([a, b])
+    })
+
+    await store.dispatch(addSegment(1, 2));
+    expect(store.getActions()).to.deep.equal(expectedActions);
+  });
+});

@@ -1,5 +1,8 @@
+import _ from 'lodash';
+
 import * as Actions from './actionConstants'
 import { geocodeLocation } from '../api/googleMap';
+import { getDirections } from '../api/directions';
 
 export function addMarkerSync(location, address) {
   return {
@@ -47,5 +50,15 @@ export function addSegmentSync(startMarkerId, endMarkerId, path) {
     startMarkerId,
     endMarkerId,
     path
+  }
+}
+
+export function addSegment({ getPath = getDirections } = {}) {
+  return (startMarkerId, endMarkerId) => async (dispatch, getState) => {
+    const { markers } = getState();
+    const startMarker = _.find(markers, ({ id }) => id === startMarkerId);
+    const endMarker = _.find(markers, ({ id }) => id === endMarkerId);
+    const path = await getPath([ startMarker.location, endMarker.location ]);
+    dispatch(addSegmentSync(startMarkerId, endMarkerId, path));
   }
 }
