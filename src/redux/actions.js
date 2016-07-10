@@ -1,7 +1,7 @@
 import * as Actions from './actionConstants'
 import { geocodeLocation } from '../api/googleMap';
 
-export function addMarker(location, address) {
+export function addMarkerSync(location, address) {
   return {
     type: Actions.ADD_MARKER,
     location,
@@ -9,14 +9,14 @@ export function addMarker(location, address) {
   }
 }
 
-export function removeMarker(id) {
+export function removeMarkerSync(id) {
   return {
     type: Actions.REMOVE_MARKER,
     id,
   }
 }
 
-export function updateMarkerLocation(id, location, address) {
+export function updateMarkerSync(id, location, address) {
   return {
     type: Actions.UPDATE_MARKER_LOCATION,
     id,
@@ -29,7 +29,7 @@ export function addMarkerWithResolvedAddress({ getAddressForLocation = geocodeLo
   return location => async dispatch => {
     const [lat, lng] = location;
     const address = await getAddressForLocation({ lat, lng });
-    dispatch(addMarker(location, address));
+    dispatch(addMarkerSync(location, address));
   }
 }
 
@@ -37,6 +37,6 @@ export function updateMarkerWithResolvedAddress({ getAddressForLocation = geocod
   return (id, location) => async dispatch => {
     const [lat, lng] = location;
     const address = await getAddressForLocation({ lat, lng });
-    dispatch(updateMarkerLocation(id, location, address));
+    dispatch(updateMarkerSync(id, location, address));
   }
 }

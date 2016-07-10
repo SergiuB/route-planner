@@ -16,7 +16,7 @@ describe('path reducer', () => {
       generateId: () => 1,
     });
 
-    expect(pathReducer(undefined, actions.addMarker([1, 1], 'address'))).to.deep.equal({
+    expect(pathReducer(undefined, actions.addMarkerSync([1, 1], 'address'))).to.deep.equal({
       markers: [{ id: 1, location: [1, 1], address: 'address' }],
       segments: [],
     });
@@ -24,7 +24,7 @@ describe('path reducer', () => {
     expect(pathReducer({
       markers: [{ id: 'othermarker' }],
       segments: [1, 2, 3],
-    }, actions.addMarker([1, 1], 'address'))).to.deep.equal({
+    }, actions.addMarkerSync([1, 1], 'address'))).to.deep.equal({
       markers: [{ id: 'othermarker' }, { id: 1, location: [1, 1], address: 'address' }],
       segments: [1, 2, 3],
     });
@@ -33,7 +33,7 @@ describe('path reducer', () => {
   it('handles REMOVE_MARKER', () => {
     const pathReducer = createPathReducer();
 
-    expect(pathReducer(undefined, actions.removeMarker(1))).to.deep.equal({
+    expect(pathReducer(undefined, actions.removeMarkerSync(1))).to.deep.equal({
       markers: [],
       segments: [],
     });
@@ -41,16 +41,16 @@ describe('path reducer', () => {
     expect(pathReducer({
       markers: [{ id: 1 }, { id: 2 }, { id: 3 }],
       segments: [1, 2, 3],
-    }, actions.removeMarker(2))).to.deep.equal({
+    }, actions.removeMarkerSync(2))).to.deep.equal({
       markers: [{ id: 1 }, { id: 3 }],
       segments: [1, 2, 3],
     });
   });
 
-  it('handles UPDATE_MARKER_LOCATION', () => {
+  it('handles UPDATE_MARKER', () => {
     const pathReducer = createPathReducer();
 
-    const updateAction = actions.updateMarkerLocation(1, [2, 2], 'new address');
+    const updateAction = actions.updateMarkerSync(1, [2, 2], 'new address');
 
     expect(pathReducer(undefined, updateAction))
       .to.deep.equal({
