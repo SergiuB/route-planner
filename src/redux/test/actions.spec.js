@@ -7,14 +7,14 @@ import * as types from '../actionConstants';
 
 const mockStore = configureMockStore([thunk]);
 
-describe('addMarkerWithResolvedAddress', () => {
+describe('addMarker', () => {
   it('creates ADD_MARKER when marker address has been resolved', async () => {
     const expectedActions = [
       { type: types.ADD_MARKER, location: [1, 1], address: 'address' },
     ];
     const store = mockStore({ markers: [], segments: [] });
 
-    const addMarker = actions.addMarkerWithResolvedAddress({
+    const addMarker = actions.addMarker({
       getAddressForLocation: () => Promise.resolve('address')
     })
 
@@ -23,14 +23,14 @@ describe('addMarkerWithResolvedAddress', () => {
   });
 });
 
-describe('updateMarkerWithResolvedAddress', () => {
+describe('updateMarker', () => {
   it('creates UPDATE_MARKER_LOCATION when marker address has been resolved', async () => {
     const expectedActions = [
       { type: types.UPDATE_MARKER_LOCATION, id: 1, location: [2, 2], address: 'new address' },
     ];
     const store = mockStore({ markers: [], segments: [] });
 
-    const updateMarker = actions.updateMarkerWithResolvedAddress({
+    const updateMarker = actions.updateMarker({
       getAddressForLocation: () => Promise.resolve('new address')
     })
 

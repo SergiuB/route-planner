@@ -25,7 +25,7 @@ export function updateMarkerSync(id, location, address) {
   }
 }
 
-export function addMarkerWithResolvedAddress({ getAddressForLocation = geocodeLocation } = {}) {
+export function addMarker({ getAddressForLocation = geocodeLocation } = {}) {
   return location => async dispatch => {
     const [lat, lng] = location;
     const address = await getAddressForLocation({ lat, lng });
@@ -33,7 +33,7 @@ export function addMarkerWithResolvedAddress({ getAddressForLocation = geocodeLo
   }
 }
 
-export function updateMarkerWithResolvedAddress({ getAddressForLocation = geocodeLocation } = {}) {
+export function updateMarker({ getAddressForLocation = geocodeLocation } = {}) {
   return (id, location) => async dispatch => {
     const [lat, lng] = location;
     const address = await getAddressForLocation({ lat, lng });
