@@ -77,3 +77,14 @@ export function addSegment({ getPath = getDirections } = {}) {
     dispatch(addSegmentSync(startMarkerId, endMarkerId, path));
   }
 }
+
+export function updateSegment({ getPath = getDirections } = {}) {
+  return (segmentId) => async (dispatch, getState) => {
+    const [startMarkerId, endMarkerId] = segmentId.split('_');
+    const { markers } = getState();
+    const startMarker = _.find(markers, ({ id }) => id === startMarkerId);
+    const endMarker = _.find(markers, ({ id }) => id === endMarkerId);
+    const path = await getPath([ startMarker.location, endMarker.location ]);
+    dispatch(updateSegmentSync(segmentId, path));
+  }
+}
