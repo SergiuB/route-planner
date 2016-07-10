@@ -96,4 +96,44 @@ describe('path reducer', () => {
       }],
     });
   });
+
+  it('handles REMOVE_SEGMENT', () => {
+    const pathReducer = createPathReducer();
+
+    const removeSegmentAction = actions.removeSegmentSync(2);
+
+    expect(pathReducer(undefined, removeSegmentAction))
+      .to.deep.equal({
+        markers: [],
+        segments: [],
+      });
+
+    expect(pathReducer({
+      markers: [1, 2],
+      segments: [{ id: 1 }, { id: 2 }, { id: 3 }],
+    }, removeSegmentAction)).to.deep.equal({
+      markers: [1, 2],
+      segments: [{ id: 1 }, { id: 3 }],
+    });
+  });
+
+  it('handles UPDATE_SEGMENT', () => {
+    const pathReducer = createPathReducer();
+
+    const updateSegmentAction = actions.updateSegmentSync(2, [[1, 1], [2, 2]]);
+
+    expect(pathReducer(undefined, updateSegmentAction))
+      .to.deep.equal({
+        markers: [],
+        segments: [],
+      });
+
+    expect(pathReducer({
+      markers: [1, 2],
+      segments: [{ id: 1 }, { id: 2 }, { id: 3 }],
+    }, updateSegmentAction)).to.deep.equal({
+      markers: [1, 2],
+      segments: [{ id: 1 }, { id: 2, path: [[1, 1], [2, 2]] }, { id: 3 }],
+    });
+  });
 });

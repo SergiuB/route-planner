@@ -53,6 +53,21 @@ export function addSegmentSync(startMarkerId, endMarkerId, path) {
   }
 }
 
+export function removeSegmentSync(id) {
+  return {
+    type: Actions.REMOVE_SEGMENT,
+    id,
+  }
+}
+
+export function updateSegmentSync(id, path) {
+  return {
+    type: Actions.UPDATE_SEGMENT,
+    id,
+    path
+  }
+}
+
 export function addSegment({ getPath = getDirections } = {}) {
   return (startMarkerId, endMarkerId) => async (dispatch, getState) => {
     const { markers } = getState();

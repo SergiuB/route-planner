@@ -60,6 +60,24 @@ export default function createPathReducer({ generateId = () => uuid.v4() } = {})
                     .map(m => ({ ...m })),
         };
 
+      case types.REMOVE_SEGMENT:
+        return {
+          ...state,
+          segments: _.reject(segments, ({ id }) => id === action.id)
+                    .map(seg => ({ ...seg })),
+        };
+
+      case types.UPDATE_SEGMENT:
+        const segmentsCopy = segments.map(seg => ({ ...seg }));
+        const segment = _.find(segmentsCopy, ({ id }) => id === action.id);
+        if (segment) {
+          segment.path = action.path;
+        }
+        return {
+          ...state,
+          segments: segmentsCopy,
+        };
+
       default:
         return state;
     }
