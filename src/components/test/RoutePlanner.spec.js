@@ -83,19 +83,21 @@ describe('<RoutePlanner />', () => {
   it('dispatches addMarker when clicking first time on map', async () => {
     const spy = sinon.spy();
     const actions = {
-      addMarker: spy
+      addMarker: (id, location) => `${id},${location}`
     }
-    const dispatch = () => {};
+    const dispatch = sinon.spy();
+
+    const location = [1, 1];
+    const id = 1;
 
     const wrapper = shallow(
       <RoutePlanner
-        generateId={() => 1}
+        generateId={() => id}
         dispatch={dispatch}
         actions={actions}/>);
-    const location = [1, 1];
 
     await wrapper.find(Map).props().onMapClick(location);
-    expect(spy.calledWith(1, location)).to.be.ok;
+    expect(dispatch.calledWith(`${id},${location}`)).to.be.ok;
   });
   //
   // it('renders a Map component with one marker data object in markers prop ' +
