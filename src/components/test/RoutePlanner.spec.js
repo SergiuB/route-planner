@@ -2,9 +2,9 @@ import React from 'react';
 import _ from 'lodash';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import RoutePlanner from '../components/RoutePlanner';
-import MarkerLocation from '../components/MarkerLocation';
-import Map from '../components/Map';
+import RoutePlanner from '../RoutePlanner';
+import MarkerLocation from '../MarkerLocation';
+import Map from '../Map';
 
 const apiMock = {
   getDirections: () => Promise.resolve([]),

@@ -1,6 +1,6 @@
 /* eslint func-names: 0, prefer-arrow-callback: 0 */
 
-const createMapService = require('../services/gmapsService');
+const createMapService = require('../gmapsService');
 const polylineApi = { decode: x => x };
 const expect = require('chai').expect;
 const _ = require('lodash');
