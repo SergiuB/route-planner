@@ -48,7 +48,7 @@ export default class RoutePlanner extends Component {
     if (markerBefore && markerAfter) {
       dispatch(actions.removeSegment(`${markerBefore.id}_${id}`));
       dispatch(actions.removeSegment(`${id}_${markerAfter.id}`));
-      dispatch(actions.addSegment(markerBefore.id, markerAfter.id));
+      await dispatch(actions.addSegment(markerBefore.id, markerAfter.id));
     }
   }
 
