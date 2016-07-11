@@ -25,9 +25,14 @@ export default class RoutePlanner extends Component {
     }
   }
 
-  removeMarker(id) {
-    const { dispatch, actions } = this.props;
+  async removeMarker(id) {
+    const { markers, dispatch, actions } = this.props;
+    const lastMarker = _.last(markers);
+    const secondLastMarker = _.last(_.initial(markers));
     dispatch(actions.removeMarker(id));
+    if (secondLastMarker && lastMarker && id === lastMarker.id) {
+      await dispatch(actions.removeSegment(`${secondLastMarker.id}_${lastMarker.id}`));
+    }
   }
 
   handleMarkerDragEnd(id, location) {

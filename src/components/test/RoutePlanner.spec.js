@@ -114,8 +114,7 @@ describe('<RoutePlanner />', () => {
     const wrapper = shallow(
       <RoutePlanner
         markers={[{
-          id: id1,
-          location: location1,
+          id: id1
         }]}
         generateId={() => id2}
         dispatch={dispatch}
@@ -129,7 +128,7 @@ describe('<RoutePlanner />', () => {
   it('dispatches removeMarker when double clicking a marker', async () => {
     const spy = sinon.spy();
     const actions = {
-      removeMarker: (id, location) => id
+      removeMarker: (id) => id
     }
     const dispatch = sinon.spy();
     const id = 1;
@@ -137,13 +136,37 @@ describe('<RoutePlanner />', () => {
     const wrapper = shallow(
       <RoutePlanner
         markers={[{
-          id: 1
+          id
         }]}
         dispatch={dispatch}
         actions={actions}/>);
 
     await wrapper.find(Map).props().onMarkerDblClick(id);
     expect(dispatch.calledWith(id)).to.be.ok;
+  });
+
+  it('dispatches removeMarker and removeSegment when double clicking the last marker', async () => {
+    const spy = sinon.spy();
+    const actions = {
+      removeMarker: id => id,
+      removeSegment: id => id,
+    }
+    const dispatch = sinon.spy();
+    const [id1, id2] = [1, 2];
+
+    const wrapper = shallow(
+      <RoutePlanner
+        markers={[{
+          id: id1
+        }, {
+          id: id2
+        }]}
+        dispatch={dispatch}
+        actions={actions}/>);
+
+    await wrapper.find(Map).props().onMarkerDblClick(id2);
+    expect(dispatch.calledWith(id2)).to.be.ok;
+    expect(dispatch.calledWith(`${id1}_${id2}`)).to.be.ok;
   });
 
   //
