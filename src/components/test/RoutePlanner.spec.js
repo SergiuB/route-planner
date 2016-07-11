@@ -99,9 +99,9 @@ describe('<RoutePlanner />', () => {
     expect(dispatch.calledWith(`${id},${location}`)).to.be.ok;
   });
 
-  it('dispatches addSegment when clicking on map with one initial marker', async () => {
+  it('dispatches addMarker and addSegment when clicking on map with one initial marker', async () => {
     const actions = {
-      addMarker: () => {},
+      addMarker: (id, location) => `${id},${location}`,
       addSegment: (startId, endId) => `${startId}_${endId}`
     }
     const dispatch = sinon.spy();
@@ -122,6 +122,7 @@ describe('<RoutePlanner />', () => {
         actions={actions}/>);
 
     await wrapper.find(Map).props().onMapClick(location2);
+    expect(dispatch.calledWith(`${id2},${location2}`)).to.be.ok;
     expect(dispatch.calledWith(`${id1}_${id2}`)).to.be.ok;
   });
 
