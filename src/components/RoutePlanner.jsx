@@ -90,7 +90,8 @@ export default class RoutePlanner extends Component {
   }
 
   render() {
-    const { markers, segments, showProgressBar } = this.state;
+    const { markers, segments, opsInProgress } = this.props;
+    console.log(markers);
     return (
       <div className="row">
         <div className="col-lg-6">
@@ -105,7 +106,7 @@ export default class RoutePlanner extends Component {
             onMarkerDblClick={this.removeMarker}
             onMarkerDragEnd={this.handleMarkerDragEnd}
           />
-        {showProgressBar && <LinearProgress mode="indeterminate" />}
+        {opsInProgress && <LinearProgress mode="indeterminate" />}
         </div>
         <div className="col-lg-3">
           <div className="segment-list">
@@ -131,12 +132,13 @@ export default class RoutePlanner extends Component {
 }
 
 RoutePlanner.propTypes = {
-  api: React.PropTypes.object,
+  markers: React.PropTypes.array,
+  segments: React.PropTypes.array,
+  opsInProgress: React.PropTypes.number,
 };
 
 RoutePlanner.defaultProps = {
-  api: {
-    getDirections,
-    geocodeLocation,
-  },
+  markers: [],
+  segments: [],
+  opsInProgress: 0,
 };

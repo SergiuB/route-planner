@@ -71,7 +71,7 @@ export default class MarkerLocation extends React.Component {
 
 MarkerLocation.propTypes = {
   id: React.PropTypes.string.isRequired,
-  location: React.PropTypes.object.isRequired,
+  location: React.PropTypes.array.isRequired,
   address: React.PropTypes.string,
   onRemove: React.PropTypes.func,
 };
