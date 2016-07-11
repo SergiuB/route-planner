@@ -1,9 +1,12 @@
 import React from 'react';
 import _ from 'lodash';
 import { expect } from 'chai';
+import sinon from 'sinon';
 import { shallow } from 'enzyme';
 import RoutePlanner from '../RoutePlanner';
 import Map from '../Map';
+import createActions from '../../redux/actions';
+import * as types from '../../redux/actionConstants';
 
 const apiMock = {
   getDirections: () => Promise.resolve([]),
@@ -76,20 +79,24 @@ describe('<RoutePlanner />', () => {
     const wrapper = shallow(<RoutePlanner opsInProgress={0} />);
     expect(wrapper.find('LinearProgress')).to.have.length(0);
   });
-  //
-  // it('renders a MarkerLocation component at the right location and with right address ' +
-  //   'after click on map', async () => {
-  //   const location = { lat: 1, lng: 1 };
-  //   const wrapper = shallow(createRoutePlanner());
-  //
-  //   await wrapper.find(Map).props().onMapClick(location);
-  //   wrapper.update();
-  //
-  //   const mlWrapper = wrapper.find(MarkerLocation);
-  //   expect(mlWrapper).to.have.length(1);
-  //   expect(mlWrapper.props().location).to.equal(location);
-  //   expect(mlWrapper.props().address).to.equal('Address11');
-  // });
+
+  it('executes the right actions when clicking first time on map', async () => {
+    const spy = sinon.spy();
+    const actions = {
+      addMarker: spy
+    }
+    const dispatch = () => {};
+
+    const wrapper = shallow(
+      <RoutePlanner
+        generateId={() => 1}
+        dispatch={dispatch}
+        actions={actions}/>);
+    const location = [1, 1];
+
+    await wrapper.find(Map).props().onMapClick(location);
+    expect(spy.calledWith(1, location)).to.be.ok;
+  });
   //
   // it('renders a Map component with one marker data object in markers prop ' +
   //   'after click on map', async () => {

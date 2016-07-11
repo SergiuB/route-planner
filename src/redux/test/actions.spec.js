@@ -2,8 +2,8 @@ import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { expect } from 'chai';
 import createPathReducer from '../pathReducer';
-import * as actions from '../actions';
 import * as types from '../actionConstants';
+import createActions from '../actions';
 
 const mockStore = configureMockStore([thunk]);
 
@@ -16,7 +16,7 @@ describe('addMarker', () => {
     ];
     const store = mockStore({ markers: [], segments: [] });
 
-    const addMarker = actions.addMarker({
+    const { addMarker } = createActions({
       getAddressForLocation: () => Promise.resolve('address')
     })
 
@@ -34,7 +34,7 @@ describe('updateMarker', () => {
     ];
     const store = mockStore({ markers: [], segments: [] });
 
-    const updateMarker = actions.updateMarker({
+    const { updateMarker } = createActions({
       getAddressForLocation: () => Promise.resolve('new address')
     })
 
@@ -52,7 +52,7 @@ describe('addSegment', () => {
     ];
     const store = mockStore({ markers: [{ id: 1, location: [1, 1] }, { id: 2, location: [2, 2]}], segments: [] });
 
-    const addSegment = actions.addSegment({
+    const { addSegment } = createActions({
       getPath: ([a, b]) => Promise.resolve([a, b])
     })
 
@@ -73,7 +73,7 @@ describe('updateSegment', () => {
       segments: [{ id: '1_2', startMarkerId: '1', endMarkerId: '2', path: [[1, 1], [2, 2]] }]
     });
 
-    const updateSegment = actions.updateSegment({
+    const { updateSegment } = createActions({
       getPath: ([a, b]) => Promise.resolve([a, b])
     })
 

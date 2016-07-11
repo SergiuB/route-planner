@@ -4,120 +4,139 @@ import * as Actions from './actionConstants'
 import { geocodeLocation } from '../api/googleMap';
 import { getDirections } from '../api/directions';
 
-export function addMarkerSync(id, location, address) {
-  return {
-    type: Actions.ADD_MARKER,
-    id,
-    location,
-    address
-  }
-}
+export default function createActions({
+  getAddressForLocation = geocodeLocation,
+  getPath = getDirections
+} = {}) {
 
-export function removeMarker(id) {
-  return {
-    type: Actions.REMOVE_MARKER,
-    id,
-  }
-}
-
-export function updateMarkerSync(id, location, address) {
-  return {
-    type: Actions.UPDATE_MARKER,
-    id,
-    location,
-    address
-  }
-}
-
-export function addMarker({ getAddressForLocation = geocodeLocation } = {}) {
-  return (id, location) => async dispatch => {
-    dispatch(operationStarted());
-    const [lat, lng] = location;
-    try {
-      const address = await getAddressForLocation({ lat, lng });
-      dispatch(addMarkerSync(id, location, address));
-    } finally {
-      dispatch(operationDone());
+  function addMarkerSync(id, location, address) {
+    return {
+      type: Actions.ADD_MARKER,
+      id,
+      location,
+      address
     }
   }
-}
 
-export function updateMarker({ getAddressForLocation = geocodeLocation } = {}) {
-  return (id, location) => async dispatch => {
-    dispatch(operationStarted());
-    const [lat, lng] = location;
-    try {
-      const address = await getAddressForLocation({ lat, lng });
-      dispatch(updateMarkerSync(id, location, address));
-    } finally {
-      dispatch(operationDone());
+  function removeMarker(id) {
+    return {
+      type: Actions.REMOVE_MARKER,
+      id,
     }
   }
-}
 
-export function addSegmentSync(startMarkerId, endMarkerId, path) {
-  return {
-    type: Actions.ADD_SEGMENT,
-    startMarkerId,
-    endMarkerId,
-    path
-  }
-}
-
-export function removeSegment(id) {
-  return {
-    type: Actions.REMOVE_SEGMENT,
-    id,
-  }
-}
-
-export function updateSegmentSync(id, path) {
-  return {
-    type: Actions.UPDATE_SEGMENT,
-    id,
-    path
-  }
-}
-
-export function addSegment({ getPath = getDirections } = {}) {
-  return (startMarkerId, endMarkerId) => async (dispatch, getState) => {
-    dispatch(operationStarted());
-    const { markers } = getState();
-    const startMarker = _.find(markers, ({ id }) => id === startMarkerId);
-    const endMarker = _.find(markers, ({ id }) => id === endMarkerId);
-    try {
-      const path = await getPath([ startMarker.location, endMarker.location ]);
-      dispatch(addSegmentSync(startMarkerId, endMarkerId, path));
-    } finally {
-      dispatch(operationDone());
+  function updateMarkerSync(id, location, address) {
+    return {
+      type: Actions.UPDATE_MARKER,
+      id,
+      location,
+      address
     }
   }
-}
 
-export function updateSegment({ getPath = getDirections } = {}) {
-  return (segmentId) => async (dispatch, getState) => {
-    dispatch(operationStarted());
-    const [startMarkerId, endMarkerId] = segmentId.split('_');
-    const { markers } = getState();
-    const startMarker = _.find(markers, ({ id }) => id === startMarkerId);
-    const endMarker = _.find(markers, ({ id }) => id === endMarkerId);
-    try {
-      const path = await getPath([ startMarker.location, endMarker.location ]);
-      dispatch(updateSegmentSync(segmentId, path));
-    } finally {
-      dispatch(operationDone());
+  function addMarker(id, location) {
+    return dispatch => {
+      dispatch(operationStarted());
+      const [lat, lng] = location;
+      return getAddressForLocation({ lat, lng })
+        .then(address => dispatch(addMarkerSync(id, location, address)))
+        .then(() => dispatch(operationDone()))
+        .catch(() => dispatch(operationDone()));
     }
   }
-}
 
-export function operationStarted() {
-  return {
-    type: Actions.OPERATION_STARTED
+  function updateMarker(id, location) {
+    return async dispatch => {
+      dispatch(operationStarted());
+      const [lat, lng] = location;
+      try {
+        const address = await getAddressForLocation({ lat, lng });
+        dispatch(updateMarkerSync(id, location, address));
+      } finally {
+        dispatch(operationDone());
+      }
+    }
   }
-}
 
-export function operationDone() {
+  function addSegmentSync(startMarkerId, endMarkerId, path) {
+    return {
+      type: Actions.ADD_SEGMENT,
+      startMarkerId,
+      endMarkerId,
+      path
+    }
+  }
+
+  function removeSegment(id) {
+    return {
+      type: Actions.REMOVE_SEGMENT,
+      id,
+    }
+  }
+
+  function updateSegmentSync(id, path) {
+    return {
+      type: Actions.UPDATE_SEGMENT,
+      id,
+      path
+    }
+  }
+
+  function addSegment(startMarkerId, endMarkerId) {
+    return async (dispatch, getState) => {
+      dispatch(operationStarted());
+      const { markers } = getState();
+      const startMarker = _.find(markers, ({ id }) => id === startMarkerId);
+      const endMarker = _.find(markers, ({ id }) => id === endMarkerId);
+      try {
+        const path = await getPath([ startMarker.location, endMarker.location ]);
+        dispatch(addSegmentSync(startMarkerId, endMarkerId, path));
+      } finally {
+        dispatch(operationDone());
+      }
+    }
+  }
+
+  function updateSegment(segmentId) {
+    return async (dispatch, getState) => {
+      dispatch(operationStarted());
+      const [startMarkerId, endMarkerId] = segmentId.split('_');
+      const { markers } = getState();
+      const startMarker = _.find(markers, ({ id }) => id === startMarkerId);
+      const endMarker = _.find(markers, ({ id }) => id === endMarkerId);
+      try {
+        const path = await getPath([ startMarker.location, endMarker.location ]);
+        dispatch(updateSegmentSync(segmentId, path));
+      } finally {
+        dispatch(operationDone());
+      }
+    }
+  }
+
+  function operationStarted() {
+    return {
+      type: Actions.OPERATION_STARTED
+    }
+  }
+
+  function operationDone() {
+    return {
+      type: Actions.OPERATION_DONE
+    }
+  }
+
   return {
-    type: Actions.OPERATION_DONE
+    addMarkerSync,
+    removeMarker,
+    updateMarkerSync,
+    addMarker,
+    updateMarker,
+    addSegmentSync,
+    removeSegment,
+    updateSegmentSync,
+    addSegment,
+    updateSegment,
+    operationStarted,
+    operationDone
   }
 }

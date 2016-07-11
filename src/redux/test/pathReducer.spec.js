@@ -1,6 +1,11 @@
 import { expect } from 'chai';
 import createPathReducer from '../pathReducer';
-import * as actions from '../actions';
+import createActions from '../actions';
+
+const actions = createActions({
+  getAddressForLocation: () => 'address',
+  getPath: () => [],
+});
 
 describe('path reducer', () => {
   it('returns the initial state', () => {

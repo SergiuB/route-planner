@@ -7,13 +7,20 @@ import Map from './Map';
 import MarkerLocation from './MarkerLocation';
 import SegmentDots from './SegmentDots';
 
-import * as actions from '../redux/actions';
-
 export default class RoutePlanner extends Component {
+  constructor(props) {
+    super(props);
+    this.handleMapClick = this.handleMapClick.bind(this);
+  }
 
   handleMapClick(location) {
-    const id = uuid.v4();
-    this.props.dispatch(actions.addMarker()(id, location));
+    const { markers, dispatch, actions, generateId } = this.props;
+    const id = generateId();
+    const lastMarker = _.last(markers);
+    return dispatch(actions.addMarker(id, location));
+    // if (lastMarker) {
+    //   dispatch(actions.addSegment(lastMarker.id, id));
+    // }
   }
 
   removeMarker(id) {
