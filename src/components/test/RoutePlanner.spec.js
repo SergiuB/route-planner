@@ -225,6 +225,61 @@ describe('<RoutePlanner />', () => {
     expect(dispatch.calledWith(`added ${id1}_${id3}`)).to.be.ok;
   });
 
+  it('dispatches updateMarker when changing the location of the single marker of the map by drag and drop', async () => {
+    const actions = {
+      updateMarker: (id, location) => `${id},${location}`
+    }
+    const dispatch = sinon.spy();
+
+    const location = [1, 1];
+    const location2 = [2, 2];
+    const id = 1;
+
+    const wrapper = shallow(
+      <RoutePlanner
+        markers={[{
+          id: id,
+          location: location,
+        }]}
+        generateId={() => id}
+        dispatch={dispatch}
+        actions={actions}/>);
+
+    await wrapper.find(Map).props().onMarkerDragEnd(id, location2);
+    expect(dispatch.calledWith(`${id},${location2}`)).to.be.ok;
+  });
+
+  it('dispatches updateMarker and updateSegment when changing the location of the middle marker of the map by drag and drop', async () => {
+    const actions = {
+      updateMarker: (id, location) => `${id},${location}`,
+      updateSegment: id => `updated ${id}`,
+    }
+    const dispatch = sinon.spy();
+
+    const [id1, id2, id3] = [1, 2, 3];
+    const [location1, location2, location3] = [[1, 1], [2, 2], [3, 3]];
+
+    const wrapper = shallow(
+      <RoutePlanner
+        markers={[{
+          id: id1,
+          location: location1,
+        }, {
+          id: id2
+        }, {
+          id: id3,
+          location: location3,
+        }]}
+        generateId={() => id}
+        dispatch={dispatch}
+        actions={actions}/>);
+
+    await wrapper.find(Map).props().onMarkerDragEnd(id2, location2);
+    expect(dispatch.calledWith(`${id2},${location2}`)).to.be.ok;
+    expect(dispatch.calledWith(`updated ${id1}_${id2}`)).to.be.ok;
+    expect(dispatch.calledWith(`updated ${id2}_${id3}`)).to.be.ok;
+  });
+
   //
   // it('renders a Map component with one marker data object in markers prop ' +
   //   'after click on map', async () => {

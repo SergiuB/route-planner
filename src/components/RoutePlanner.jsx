@@ -49,7 +49,20 @@ export default class RoutePlanner extends Component {
 
   handleMarkerDragEnd(id, location) {
     const { markers, dispatch, actions } = this.props;
-    dispatch(updateMarker(id, location));
+
+    const index = _.findIndex(markers, { id });
+    const markerBefore = markers[index - 1];
+    const markerAfter = markers[index + 1];
+
+    dispatch(actions.updateMarker(id, location));
+
+    if (markerBefore) {
+      dispatch(actions.updateSegment(`${markerBefore.id}_${id}`));
+    }
+
+    if (markerAfter) {
+      dispatch(actions.updateSegment(`${id}_${markerAfter.id}`));
+    }
   }
 
   render() {
