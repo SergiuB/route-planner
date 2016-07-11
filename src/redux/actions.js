@@ -13,7 +13,7 @@ export function addMarkerSync(id, location, address) {
   }
 }
 
-export function removeMarkerSync(id) {
+export function removeMarker(id) {
   return {
     type: Actions.REMOVE_MARKER,
     id,
@@ -64,7 +64,7 @@ export function addSegmentSync(startMarkerId, endMarkerId, path) {
   }
 }
 
-export function removeSegmentSync(id) {
+export function removeSegment(id) {
   return {
     type: Actions.REMOVE_SEGMENT,
     id,

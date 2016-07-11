@@ -35,7 +35,7 @@ describe('path reducer', () => {
   it('handles REMOVE_MARKER', () => {
     const pathReducer = createPathReducer();
 
-    expect(pathReducer(undefined, actions.removeMarkerSync(1))).to.deep.equal({
+    expect(pathReducer(undefined, actions.removeMarker(1))).to.deep.equal({
       markers: [],
       segments: [],
       opsInProgress: 0,
@@ -45,7 +45,7 @@ describe('path reducer', () => {
       markers: [{ id: 1 }, { id: 2 }, { id: 3 }],
       segments: [1, 2, 3],
       opsInProgress: 0,
-    }, actions.removeMarkerSync(2))).to.deep.equal({
+    }, actions.removeMarker(2))).to.deep.equal({
       markers: [{ id: 1 }, { id: 3 }],
       segments: [1, 2, 3],
       opsInProgress: 0,
@@ -111,7 +111,7 @@ describe('path reducer', () => {
   it('handles REMOVE_SEGMENT', () => {
     const pathReducer = createPathReducer();
 
-    const removeSegmentAction = actions.removeSegmentSync(2);
+    const removeSegmentAction = actions.removeSegment(2);
 
     expect(pathReducer(undefined, removeSegmentAction))
       .to.deep.equal({
