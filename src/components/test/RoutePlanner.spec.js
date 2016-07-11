@@ -15,7 +15,7 @@ function createRoutePlanner() {
 }
 
 describe('<RoutePlanner />', () => {
-  it('renders a Map component and a marker', () => {
+  it('renders a Map and a MarkerLocation given one marker', () => {
     const marker = {
       id: '1',
       location: [1, 1],
@@ -36,6 +36,44 @@ describe('<RoutePlanner />', () => {
     expect(mlWrapper.props().id).to.equal(marker.id);
 
     expect(wrapper.find('SegmentDots')).to.have.length(0);
+    expect(wrapper.find('LinearProgress')).to.have.length(0);
+  });
+
+  it('renders a Map, three MarkerLocations and two SegmentDots given three markers ' +
+    'and two segments', () => {
+    const markers = [
+      { id: '1', location: [1, 1], address: 'address1' },
+      { id: '2', location: [2, 2], address: 'address2' },
+      { id: '3', location: [3, 3], address: 'address3' },
+    ];
+    const segments = [
+      { id: '1_2', startMarkerId: '1', endMarkerId: '2', path: [[1, 1], [2, 2]] },
+      { id: '2_3', startMarkerId: '2', endMarkerId: '3', path: [[2, 2], [3, 3]] },
+    ];
+
+    const wrapper = shallow(<RoutePlanner markers={markers} segments={segments} />);
+
+    const mapWrapper = wrapper.find(Map);
+    expect(mapWrapper).to.have.length(1);
+    expect(mapWrapper.props().markers).to.deep.equal(markers);
+    expect(mapWrapper.props().path).to.deep.equal(_.concat(segments[0].path, segments[1].path));
+
+    const mlWrapper = wrapper.find('MarkerLocation');
+    expect(mlWrapper).to.have.length(3);
+    _.times(3, x => expect(mlWrapper.at(x).props()).to.include(markers[x]));
+
+    const sdWrapper = wrapper.find('SegmentDots');
+    expect(sdWrapper).to.have.length(2);
+    _.times(3, x => expect(sdWrapper.at(x).props()).to.include(_.pick(segments[x], ['id'])));
+  });
+
+  it('renders a LinearProgress if operations in progress', () => {
+    const wrapper = shallow(<RoutePlanner opsInProgress={1} />);
+    expect(wrapper.find('LinearProgress')).to.have.length(1);
+  });
+
+  it('does not render a LinearProgress if no operations in progress', () => {
+    const wrapper = shallow(<RoutePlanner opsInProgress={0} />);
     expect(wrapper.find('LinearProgress')).to.have.length(0);
   });
   //

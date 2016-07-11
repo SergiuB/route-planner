@@ -91,7 +91,6 @@ export default class RoutePlanner extends Component {
 
   render() {
     const { markers, segments, opsInProgress } = this.props;
-    // console.log(markers);
     return (
       <div className="row">
         <div className="col-lg-6">
@@ -111,7 +110,7 @@ export default class RoutePlanner extends Component {
         <div className="col-lg-3">
           <div className="segment-list">
             {segments.map(({ id }, index) => (
-              <SegmentDots key={id} segmentIdx={index} segmentDistance={100} segmentElevation={500} />
+              <SegmentDots id={id} key={id} segmentIdx={index} segmentDistance={100} segmentElevation={500} />
             ))}
           </div>
           <div className="marker-list">
