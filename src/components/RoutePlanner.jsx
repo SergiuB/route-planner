@@ -27,9 +27,6 @@ export default class RoutePlanner extends Component {
 
   async removeMarker(id) {
     const { markers, dispatch, actions } = this.props;
-    const lastMarker = _.last(markers);
-    const secondLastMarker = _.last(_.initial(markers));
-    const [firstMarker, secondMarker] = (markers);
 
     const index = _.findIndex(markers, { id });
     const markerBefore = markers[index - 1];
@@ -37,23 +34,22 @@ export default class RoutePlanner extends Component {
 
     dispatch(actions.removeMarker(id));
 
-    if (secondLastMarker && lastMarker && id === lastMarker.id) {
-      dispatch(actions.removeSegment(`${secondLastMarker.id}_${lastMarker.id}`));
+    if (markerBefore) {
+      dispatch(actions.removeSegment(`${markerBefore.id}_${id}`));
     }
 
-    if (firstMarker && secondMarker && id === firstMarker.id) {
-      dispatch(actions.removeSegment(`${firstMarker.id}_${secondMarker.id}`));
+    if (markerAfter) {
+      dispatch(actions.removeSegment(`${id}_${markerAfter.id}`));
     }
 
     if (markerBefore && markerAfter) {
-      dispatch(actions.removeSegment(`${markerBefore.id}_${id}`));
-      dispatch(actions.removeSegment(`${id}_${markerAfter.id}`));
       await dispatch(actions.addSegment(markerBefore.id, markerAfter.id));
     }
   }
 
   handleMarkerDragEnd(id, location) {
-    this.props.dispatch(actions.updateMarker()(id, location));
+    const { markers, dispatch, actions } = this.props;
+    dispatch(updateMarker(id, location));
   }
 
   render() {
