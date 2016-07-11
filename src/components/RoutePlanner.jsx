@@ -29,9 +29,16 @@ export default class RoutePlanner extends Component {
     const { markers, dispatch, actions } = this.props;
     const lastMarker = _.last(markers);
     const secondLastMarker = _.last(_.initial(markers));
+    const [firstMarker, secondMarker] = (markers);
+
     dispatch(actions.removeMarker(id));
+
     if (secondLastMarker && lastMarker && id === lastMarker.id) {
       await dispatch(actions.removeSegment(`${secondLastMarker.id}_${lastMarker.id}`));
+    }
+
+    if (firstMarker && secondMarker && id === firstMarker.id) {
+      await dispatch(actions.removeSegment(`${firstMarker.id}_${secondMarker.id}`));
     }
   }
 
