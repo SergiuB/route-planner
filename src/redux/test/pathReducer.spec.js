@@ -13,11 +13,9 @@ describe('path reducer', () => {
   });
 
   it('handles ADD_MARKER', () => {
-    const pathReducer = createPathReducer({
-      generateId: () => 1,
-    });
+    const pathReducer = createPathReducer();
 
-    expect(pathReducer(undefined, actions.addMarkerSync([1, 1], 'address'))).to.deep.equal({
+    expect(pathReducer(undefined, actions.addMarkerSync(1, [1, 1], 'address'))).to.deep.equal({
       markers: [{ id: 1, location: [1, 1], address: 'address' }],
       segments: [],
       opsInProgress: 0,
@@ -27,7 +25,7 @@ describe('path reducer', () => {
       markers: [{ id: 'othermarker' }],
       segments: [1, 2, 3],
       opsInProgress: 0,
-    }, actions.addMarkerSync([1, 1], 'address'))).to.deep.equal({
+    }, actions.addMarkerSync(1, [1, 1], 'address'))).to.deep.equal({
       markers: [{ id: 'othermarker' }, { id: 1, location: [1, 1], address: 'address' }],
       segments: [1, 2, 3],
       opsInProgress: 0,

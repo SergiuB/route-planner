@@ -11,14 +11,14 @@ const initialState = {
   opsInProgress: 0,
 };
 
-export default function createPathReducer({ generateId = () => uuid.v4() } = {}) {
+export default function createPathReducer() {
   return function path(state = initialState, action) {
     const { markers, segments, opsInProgress } = state;
     switch (action.type) {
 
       case types.ADD_MARKER:
         const newMarker = {
-          id: generateId(),
+          id: action.id,
           location: action.location,
           address: action.address,
         };

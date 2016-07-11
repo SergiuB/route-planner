@@ -11,7 +11,7 @@ describe('addMarker', () => {
   it('creates ADD_MARKER when marker address has been resolved', async () => {
     const expectedActions = [
       { type: types.OPERATION_STARTED},
-      { type: types.ADD_MARKER, location: [1, 1], address: 'address' },
+      { type: types.ADD_MARKER, id: 1, location: [1, 1], address: 'address' },
       { type: types.OPERATION_DONE},
     ];
     const store = mockStore({ markers: [], segments: [] });
@@ -20,7 +20,7 @@ describe('addMarker', () => {
       getAddressForLocation: () => Promise.resolve('address')
     })
 
-    await store.dispatch(addMarker([1, 1]));
+    await store.dispatch(addMarker(1, [1, 1]));
     expect(store.getActions()).to.deep.equal(expectedActions);
   });
 });

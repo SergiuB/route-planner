@@ -4,9 +4,10 @@ import * as Actions from './actionConstants'
 import { geocodeLocation } from '../api/googleMap';
 import { getDirections } from '../api/directions';
 
-export function addMarkerSync(location, address) {
+export function addMarkerSync(id, location, address) {
   return {
     type: Actions.ADD_MARKER,
+    id,
     location,
     address
   }
@@ -29,12 +30,12 @@ export function updateMarkerSync(id, location, address) {
 }
 
 export function addMarker({ getAddressForLocation = geocodeLocation } = {}) {
-  return location => async dispatch => {
+  return (id, location) => async dispatch => {
     dispatch(operationStarted());
     const [lat, lng] = location;
     try {
       const address = await getAddressForLocation({ lat, lng });
-      dispatch(addMarkerSync(location, address));
+      dispatch(addMarkerSync(id, location, address));
     } finally {
       dispatch(operationDone());
     }
