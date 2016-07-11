@@ -80,7 +80,7 @@ describe('<RoutePlanner />', () => {
     expect(wrapper.find('LinearProgress')).to.have.length(0);
   });
 
-  it('executes the right actions when clicking first time on map', async () => {
+  it('dispatches addMarker when clicking first time on map', async () => {
     const spy = sinon.spy();
     const actions = {
       addMarker: spy
