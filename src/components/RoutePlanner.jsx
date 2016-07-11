@@ -21,7 +21,7 @@ export default class RoutePlanner extends Component {
     const previousMarker = _.last(markers);
     await dispatch(actions.addMarker(id, location));
     if (previousMarker) {
-      await dispatch(actions.addSegment(previousMarker.id, id));
+      dispatch(actions.addSegment(previousMarker.id, id));
     }
   }
 
@@ -31,14 +31,24 @@ export default class RoutePlanner extends Component {
     const secondLastMarker = _.last(_.initial(markers));
     const [firstMarker, secondMarker] = (markers);
 
+    const index = _.findIndex(markers, { id });
+    const markerBefore = markers[index - 1];
+    const markerAfter = markers[index + 1];
+
     dispatch(actions.removeMarker(id));
 
     if (secondLastMarker && lastMarker && id === lastMarker.id) {
-      await dispatch(actions.removeSegment(`${secondLastMarker.id}_${lastMarker.id}`));
+      dispatch(actions.removeSegment(`${secondLastMarker.id}_${lastMarker.id}`));
     }
 
     if (firstMarker && secondMarker && id === firstMarker.id) {
-      await dispatch(actions.removeSegment(`${firstMarker.id}_${secondMarker.id}`));
+      dispatch(actions.removeSegment(`${firstMarker.id}_${secondMarker.id}`));
+    }
+
+    if (markerBefore && markerAfter) {
+      dispatch(actions.removeSegment(`${markerBefore.id}_${id}`));
+      dispatch(actions.removeSegment(`${id}_${markerAfter.id}`));
+      dispatch(actions.addSegment(markerBefore.id, markerAfter.id));
     }
   }
 

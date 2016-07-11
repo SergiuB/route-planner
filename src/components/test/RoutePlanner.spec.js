@@ -193,6 +193,38 @@ describe('<RoutePlanner />', () => {
     expect(dispatch.calledWith(`${id1}_${id2}`)).to.be.ok;
   });
 
+  it('dispatches removeMarker, removeSegment and addSegment when double clicking a marker in the middle', async () => {
+    const spy = sinon.spy();
+    const actions = {
+      removeMarker: id => id,
+      removeSegment: id => `removed ${id}`,
+      addSegment: (startId, endId) => `added ${startId}_${endId}`
+    }
+    const dispatch = sinon.spy();
+    const [id1, id2, id3] = [1, 2, 3];
+    const [location1, location3] = [[1, 1], [3, 3]];
+
+    const wrapper = shallow(
+      <RoutePlanner
+        markers={[{
+          id: id1,
+          location: location1,
+        }, {
+          id: id2
+        }, {
+          id: id3,
+          location: location3,
+        }]}
+        dispatch={dispatch}
+        actions={actions}/>);
+
+    await wrapper.find(Map).props().onMarkerDblClick(id2);
+    expect(dispatch.calledWith(id2)).to.be.ok;
+    expect(dispatch.calledWith(`removed ${id1}_${id2}`)).to.be.ok;
+    expect(dispatch.calledWith(`removed ${id2}_${id3}`)).to.be.ok;
+    expect(dispatch.calledWith(`added ${id1}_${id3}`)).to.be.ok;
+  });
+
   //
   // it('renders a Map component with one marker data object in markers prop ' +
   //   'after click on map', async () => {
