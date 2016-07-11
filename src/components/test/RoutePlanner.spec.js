@@ -80,7 +80,7 @@ describe('<RoutePlanner />', () => {
     expect(wrapper.find('LinearProgress')).to.have.length(0);
   });
 
-  it('dispatches addMarker when clicking first time on map', async () => {
+  it('dispatches addMarker when clicking on map with no markers', async () => {
     const actions = {
       addMarker: (id, location) => `${id},${location}`
     }
@@ -97,6 +97,32 @@ describe('<RoutePlanner />', () => {
 
     await wrapper.find(Map).props().onMapClick(location);
     expect(dispatch.calledWith(`${id},${location}`)).to.be.ok;
+  });
+
+  it('dispatches addSegment when clicking on map with one initial marker', async () => {
+    const actions = {
+      addMarker: () => {},
+      addSegment: (startId, endId) => `${startId}_${endId}`
+    }
+    const dispatch = sinon.spy();
+
+    const location2 = [2, 2];
+    const id2 = 2;
+    const location1 = [1, 1];
+    const id1 = 1;
+
+    const wrapper = shallow(
+      <RoutePlanner
+        markers={[{
+          id: id1,
+          location: location1,
+        }]}
+        generateId={() => id2}
+        dispatch={dispatch}
+        actions={actions}/>);
+
+    await wrapper.find(Map).props().onMapClick(location2);
+    expect(dispatch.calledWith(`${id1}_${id2}`)).to.be.ok;
   });
 
   it('dispatches removeMarker when double clicking a marker', async () => {

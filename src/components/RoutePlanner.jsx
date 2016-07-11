@@ -15,14 +15,14 @@ export default class RoutePlanner extends Component {
     this.handleMarkerDragEnd = this.handleMarkerDragEnd.bind(this);
   }
 
-  handleMapClick(location) {
+  async handleMapClick(location) {
     const { markers, dispatch, actions, generateId } = this.props;
     const id = generateId();
-    const lastMarker = _.last(markers);
-    return dispatch(actions.addMarker(id, location));
-    // if (lastMarker) {
-    //   dispatch(actions.addSegment(lastMarker.id, id));
-    // }
+    const previousMarker = _.last(markers);
+    await dispatch(actions.addMarker(id, location));
+    if (previousMarker) {
+      await dispatch(actions.addSegment(previousMarker.id, id));
+    }
   }
 
   removeMarker(id) {
