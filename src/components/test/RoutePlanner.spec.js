@@ -81,7 +81,6 @@ describe('<RoutePlanner />', () => {
   });
 
   it('dispatches addMarker when clicking first time on map', async () => {
-    const spy = sinon.spy();
     const actions = {
       addMarker: (id, location) => `${id},${location}`
     }
@@ -99,6 +98,27 @@ describe('<RoutePlanner />', () => {
     await wrapper.find(Map).props().onMapClick(location);
     expect(dispatch.calledWith(`${id},${location}`)).to.be.ok;
   });
+
+  it('dispatches removeMarker when double clicking a marker', async () => {
+    const spy = sinon.spy();
+    const actions = {
+      removeMarker: (id, location) => id
+    }
+    const dispatch = sinon.spy();
+    const id = 1;
+
+    const wrapper = shallow(
+      <RoutePlanner
+        markers={[{
+          id: 1
+        }]}
+        dispatch={dispatch}
+        actions={actions}/>);
+
+    await wrapper.find(Map).props().onMarkerDblClick(id);
+    expect(dispatch.calledWith(id)).to.be.ok;
+  });
+
   //
   // it('renders a Map component with one marker data object in markers prop ' +
   //   'after click on map', async () => {

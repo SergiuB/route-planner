@@ -11,6 +11,8 @@ export default class RoutePlanner extends Component {
   constructor(props) {
     super(props);
     this.handleMapClick = this.handleMapClick.bind(this);
+    this.removeMarker = this.removeMarker.bind(this);
+    this.handleMarkerDragEnd = this.handleMarkerDragEnd.bind(this);
   }
 
   handleMapClick(location) {
@@ -24,7 +26,8 @@ export default class RoutePlanner extends Component {
   }
 
   removeMarker(id) {
-    this.props.dispatch(actions.removeMarker(id));
+    const { dispatch, actions } = this.props;
+    dispatch(actions.removeMarker(id));
   }
 
   handleMarkerDragEnd(id, location) {
@@ -80,6 +83,8 @@ RoutePlanner.propTypes = {
   segments: React.PropTypes.array,
   opsInProgress: React.PropTypes.number,
   dispatch: React.PropTypes.func,
+  actions: React.PropTypes.object,
+  generateId: React.PropTypes.func,
 };
 
 RoutePlanner.defaultProps = {
