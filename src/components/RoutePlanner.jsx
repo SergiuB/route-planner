@@ -91,7 +91,7 @@ export default class RoutePlanner extends Component {
 
   render() {
     const { markers, segments, opsInProgress } = this.props;
-    console.log(markers);
+    // console.log(markers);
     return (
       <div className="row">
         <div className="col-lg-6">

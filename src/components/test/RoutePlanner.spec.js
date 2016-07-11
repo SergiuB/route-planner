@@ -3,7 +3,6 @@ import _ from 'lodash';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import RoutePlanner from '../RoutePlanner';
-import MarkerLocation from '../MarkerLocation';
 import Map from '../Map';
 
 const apiMock = {
@@ -30,15 +29,14 @@ describe('<RoutePlanner />', () => {
     expect(mapWrapper.props().markers).to.deep.equal([marker]);
     expect(mapWrapper.props().path).to.be.empty;
 
-    const mlWrapper = wrapper.find(MarkerLocation);
+    const mlWrapper = wrapper.find('MarkerLocation');
     expect(mlWrapper).to.have.length(1);
     expect(mlWrapper.props().location).to.equal(marker.location);
     expect(mlWrapper.props().address).to.equal(marker.address);
     expect(mlWrapper.props().id).to.equal(marker.id);
-    expect(mlWrapper.props().key).to.equal(marker.id);
 
-    expect(wrapper.find(SegmentDots)).to.have.length(0);
-    expect(wrapper.find(LinearProgress)).to.have.length(0);
+    expect(wrapper.find('SegmentDots')).to.have.length(0);
+    expect(wrapper.find('LinearProgress')).to.have.length(0);
   });
   //
   // it('renders a MarkerLocation component at the right location and with right address ' +
