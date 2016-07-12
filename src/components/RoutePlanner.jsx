@@ -49,22 +49,24 @@ export class RoutePlanner extends Component {
     }
   }
 
-  handleMarkerDragEnd(id, location) {
+  async handleMarkerDragEnd(id, location) {
     const { markers, dispatch, actions } = this.props;
 
     const index = _.findIndex(markers, { id });
     const markerBefore = markers[index - 1];
     const markerAfter = markers[index + 1];
 
-    dispatch(actions.updateMarker(id, location));
+    await dispatch(actions.updateMarker(id, location));
 
+    const segmentUpdates = [];
     if (markerBefore) {
-      dispatch(actions.updateSegment(`${markerBefore.id}_${id}`));
+      segmentUpdates.push(dispatch(actions.updateSegment(`${markerBefore.id}_${id}`)));
     }
 
     if (markerAfter) {
-      dispatch(actions.updateSegment(`${id}_${markerAfter.id}`));
+      segmentUpdates.push(dispatch(actions.updateSegment(`${id}_${markerAfter.id}`)));
     }
+    return Promise.all(segmentUpdates);
   }
 
   render() {
