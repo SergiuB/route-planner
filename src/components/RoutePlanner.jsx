@@ -2,12 +2,14 @@ import React, { Component } from 'react';
 import LinearProgress from 'material-ui/LinearProgress';
 import uuid from 'node-uuid';
 import _ from 'lodash';
+import { connect } from 'react-redux';
 
 import Map from './Map';
 import MarkerLocation from './MarkerLocation';
 import SegmentDots from './SegmentDots';
+import createActions from '../redux/actions';
 
-export default class RoutePlanner extends Component {
+export class RoutePlanner extends Component {
   constructor(props) {
     super(props);
     this.handleMapClick = this.handleMapClick.bind(this);
@@ -122,4 +124,16 @@ RoutePlanner.defaultProps = {
   markers: [],
   segments: [],
   opsInProgress: 0,
+  generateId: uuid.v4,
+  actions: createActions(),
 };
+
+const mapStateToProps = (state) => {
+  return {
+    markers: state.markers,
+    segments: state.segments,
+    opsInProgress: state.opsInProgress,
+  }
+}
+
+export default connect(mapStateToProps)(RoutePlanner)

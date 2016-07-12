@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { shallow } from 'enzyme';
-import RoutePlanner from '../RoutePlanner';
+import { RoutePlanner } from '../RoutePlanner';
 import Map from '../Map';
 import createActions from '../../redux/actions';
 import * as types from '../../redux/actionConstants';

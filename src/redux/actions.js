@@ -90,7 +90,7 @@ export default function createActions({
       const endMarker = _.find(markers, ({ id }) => id === endMarkerId);
       try {
         const path = await getPath([ startMarker.location, endMarker.location ]);
-        dispatch(addSegmentSync(startMarkerId, endMarkerId, path));
+        dispatch(addSegmentSync(startMarkerId, endMarkerId, path[0]));
       } finally {
         dispatch(operationDone());
       }
@@ -106,7 +106,7 @@ export default function createActions({
       const endMarker = _.find(markers, ({ id }) => id === endMarkerId);
       try {
         const path = await getPath([ startMarker.location, endMarker.location ]);
-        dispatch(updateSegmentSync(segmentId, path));
+        dispatch(updateSegmentSync(segmentId, path[0]));
       } finally {
         dispatch(operationDone());
       }

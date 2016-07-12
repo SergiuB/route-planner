@@ -53,7 +53,7 @@ describe('addSegment', () => {
     const store = mockStore({ markers: [{ id: 1, location: [1, 1] }, { id: 2, location: [2, 2]}], segments: [] });
 
     const { addSegment } = createActions({
-      getPath: ([a, b]) => Promise.resolve([a, b])
+      getPath: ([a, b]) => Promise.resolve([[a, b]])
     })
 
     await store.dispatch(addSegment(1, 2));
@@ -74,7 +74,7 @@ describe('updateSegment', () => {
     });
 
     const { updateSegment } = createActions({
-      getPath: ([a, b]) => Promise.resolve([a, b])
+      getPath: ([a, b]) => Promise.resolve([[a, b]])
     })
 
     await store.dispatch(updateSegment('1_2'));

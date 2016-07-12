@@ -9,7 +9,7 @@ export default class Map extends React.Component {
       center,
       zoom,
       listeners: {
-        click: ({ latLng }) => onMapClick({ lat: latLng.lat(), lng: latLng.lng() }),
+        click: ({ latLng }) => onMapClick([latLng.lat(), latLng.lng()]),
       },
     });
 
@@ -37,7 +37,7 @@ export default class Map extends React.Component {
           dblclick: () => onMarkerDblClick(markerData.id),
           dragend: ({ latLng }) => onMarkerDragEnd(
             markerData.id,
-            { lat: latLng.lat(), lng: latLng.lng() }
+            [latLng.lat(), latLng.lng()]
           ),
         },
       }));

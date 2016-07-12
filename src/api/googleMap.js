@@ -55,8 +55,9 @@ class GoogleMapInstance {
   }
 
   createMarker({ id, location, listeners }) {
+    const [lat, lng] = location;
     const marker = new google.maps.Marker({
-      position: location,
+      position: { lat, lng },
       map: this.map,
       icon: markerIcon,
       draggable:true,
