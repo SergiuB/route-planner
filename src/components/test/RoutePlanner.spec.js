@@ -110,11 +110,17 @@ describe('<RoutePlanner />', () => {
   });
 
   it('dispatches addMarker and addSegment when clicking on map with one initial marker', async () => {
+    // configure addMarker to finish later
     const actions = {
-      addMarker: (id, location) => `${id},${location}`,
-      addSegment: (startId, endId) => `${startId}_${endId}`
+      addMarker: (id, location) =>
+                        new Promise((resolve) =>
+                            setTimeout(() => resolve(`added marker ${id} with location ${location}`), 100)
+                        ),
+      addSegment: (startId, endId) => Promise.resolve(`added segment ${startId}_${endId}`),
     }
-    const dispatch = sinon.spy();
+
+    let dispatchedActions = [];
+    const dispatch = async promise => dispatchedActions.push(await promise);
 
     const location2 = [2, 2];
     const id2 = 2;
@@ -130,9 +136,14 @@ describe('<RoutePlanner />', () => {
         dispatch={dispatch}
         actions={actions}/>);
 
-    await wrapper.find(Map).props().onMapClick(location2);
-    expect(dispatch.calledWith(`${id2},${location2}`)).to.be.ok;
-    expect(dispatch.calledWith(`${id1}_${id2}`)).to.be.ok;
+    const promise = wrapper.find(Map).props().onMapClick(location2);
+    clock.tick(100);
+    await promise;
+
+    expect(dispatchedActions).to.deep.equal([
+      'added marker 2 with location 2,2',
+      'added segment 1_2'
+    ]);
   });
 
   it('dispatches removeMarker when double clicking a marker', async () => {
