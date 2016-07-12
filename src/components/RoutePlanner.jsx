@@ -85,7 +85,7 @@ export class RoutePlanner extends Component {
             onMarkerDblClick={this.removeMarker}
             onMarkerDragEnd={this.handleMarkerDragEnd}
           />
-        {opsInProgress && <LinearProgress mode="indeterminate" />}
+        {!!opsInProgress && <LinearProgress mode="indeterminate" />}
         </div>
         <div className="col-lg-3">
           <div className="segment-list">
