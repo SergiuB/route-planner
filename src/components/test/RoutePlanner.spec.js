@@ -17,7 +17,17 @@ function createRoutePlanner() {
   return <RoutePlanner api={apiMock} />;
 }
 
+let clock;
+
 describe('<RoutePlanner />', () => {
+  before(() => {
+    clock = sinon.useFakeTimers();
+  });
+
+  after(() => {
+    clock.restore();
+  });
+
   it('renders a Map and a MarkerLocation given one marker', () => {
     const marker = {
       id: '1',
@@ -250,11 +260,17 @@ describe('<RoutePlanner />', () => {
   });
 
   it('dispatches updateMarker and updateSegment when changing the location of the middle marker of the map by drag and drop', async () => {
+
+    // configure updateMarker to finish later
     const actions = {
-      updateMarker: (id, location) => `${id},${location}`,
-      updateSegment: id => `updated ${id}`,
+      updateMarker: (id, location) =>
+                        new Promise((resolve) =>
+                            setTimeout(() => resolve(`updated marker ${id} with location ${location}`), 100)
+                        ),
+      updateSegment: id => Promise.resolve(`updated segment ${id}`),
     }
-    const dispatch = sinon.spy();
+    let dispatchedActions = [];
+    const dispatch = async promise => dispatchedActions.push(await promise);
 
     const [id1, id2, id3] = [1, 2, 3];
     const [location1, location2, location3] = [[1, 1], [2, 2], [3, 3]];
@@ -274,9 +290,13 @@ describe('<RoutePlanner />', () => {
         dispatch={dispatch}
         actions={actions}/>);
 
-    await wrapper.find(Map).props().onMarkerDragEnd(id2, location2);
-    expect(dispatch.calledWith(`${id2},${location2}`)).to.be.ok;
-    expect(dispatch.calledWith(`updated ${id1}_${id2}`)).to.be.ok;
-    expect(dispatch.calledWith(`updated ${id2}_${id3}`)).to.be.ok;
+    const promise = wrapper.find(Map).props().onMarkerDragEnd(id2, location2);
+    clock.tick(100);
+    await promise;
+    expect(dispatchedActions).to.deep.equal([
+      'updated marker 2 with location 2,2',
+      'updated segment 1_2',
+      'updated segment 2_3'
+    ]);
   });
 });
