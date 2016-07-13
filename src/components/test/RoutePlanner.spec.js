@@ -310,4 +310,44 @@ describe('<RoutePlanner />', () => {
       'updated segment 2_3'
     ]);
   });
+
+  it('dispatches changeMarkerIndex, removeSegment, addSegment when changing the position of a marker in the list', async () => {
+    // configure updateMarker to finish later
+    const actions = {
+      changeMarkerIndex: (id, newIndex) => Promise.resolve(`changed marker ${id} to new index ${newIndex}`),
+      removeSegment: id => Promise.resolve(`removed segment ${id}`),
+      addSegment: (startId, endId) => Promise.resolve(`added segment ${startId}_${endId}`),
+    }
+    let dispatchedActions = [];
+    const dispatch = async promise => dispatchedActions.push(await promise);
+
+    const [id1, id2, id3, id4] = [1, 2, 3, 4];
+
+    const wrapper = shallow(
+      <RoutePlanner
+        markers={[{
+          id: id1,  // position 0
+        }, {
+          id: id2   // position 1
+        }, {
+          id: id3,  // position 2
+        }, {
+          id: id4,  // position 3
+        }]}
+        dispatch={dispatch}
+        actions={actions}/>);
+
+    // change position of marker with id3 from 2 to 1
+    const newIndex = 1;
+    await wrapper.find('Markers').props().onMarkerChangeIndex(id3, newIndex);
+    expect(dispatchedActions).to.deep.equal([
+      `changed marker ${id3} to new index ${newIndex}`,
+      `removed segment ${id2}_${id3}`,
+      `removed segment ${id2}_${id4}`,
+      `removed segment ${id1}_${id2}`,
+      `added segment ${id2}_${id4}`,
+      `added segment ${id1}_${id3}`,
+      `added segment ${id3}_${id1}`,
+    ]);
+  });
 });
