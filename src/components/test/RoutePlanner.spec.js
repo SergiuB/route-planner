@@ -28,7 +28,7 @@ describe('<RoutePlanner />', () => {
     clock.restore();
   });
 
-  it('renders a Map and a MarkerLocation given one marker', () => {
+  it('renders a Map and a MarkerList with one marker given one marker', () => {
     const marker = {
       id: '1',
       location: [1, 1],
@@ -42,17 +42,15 @@ describe('<RoutePlanner />', () => {
     expect(mapWrapper.props().markers).to.deep.equal([marker]);
     expect(mapWrapper.props().path).to.be.empty;
 
-    const mlWrapper = wrapper.find('MarkerLocation');
+    const mlWrapper = wrapper.find('MarkerList');
     expect(mlWrapper).to.have.length(1);
-    expect(mlWrapper.props().location).to.equal(marker.location);
-    expect(mlWrapper.props().address).to.equal(marker.address);
-    expect(mlWrapper.props().id).to.equal(marker.id);
+    expect(mlWrapper.props().markers).to.deep.equal([marker]);
 
     expect(wrapper.find('SegmentDots')).to.have.length(0);
     expect(wrapper.find('LinearProgress')).to.have.length(0);
   });
 
-  it('renders a Map, three MarkerLocations and two SegmentDots given three markers ' +
+  it('renders a Map, MarkerList with three markers, and two SegmentDots given three markers ' +
     'and two segments', () => {
     const markers = [
       { id: '1', location: [1, 1], address: 'address1' },
@@ -71,9 +69,9 @@ describe('<RoutePlanner />', () => {
     expect(mapWrapper.props().markers).to.deep.equal(markers);
     expect(mapWrapper.props().path).to.deep.equal(_.concat(segments[0].path, segments[1].path));
 
-    const mlWrapper = wrapper.find('MarkerLocation');
-    expect(mlWrapper).to.have.length(3);
-    _.times(3, x => expect(mlWrapper.at(x).props()).to.include(markers[x]));
+    const mlWrapper = wrapper.find('MarkerList');
+    expect(mlWrapper).to.have.length(1);
+    expect(mlWrapper.props().markers).to.deep.equal(markers);
 
     const sdWrapper = wrapper.find('SegmentDots');
     expect(sdWrapper).to.have.length(2);
@@ -339,15 +337,15 @@ describe('<RoutePlanner />', () => {
 
     // change position of marker with id3 from 2 to 1
     const newIndex = 1;
-    await wrapper.find('Markers').props().onMarkerChangeIndex(id3, newIndex);
+    await wrapper.find('MarkerList').props().onMarkerChangeIndex(id3, newIndex);
     expect(dispatchedActions).to.deep.equal([
       `changed marker ${id3} to new index ${newIndex}`,
       `removed segment ${id2}_${id3}`,
-      `removed segment ${id2}_${id4}`,
+      `removed segment ${id3}_${id4}`,
       `removed segment ${id1}_${id2}`,
       `added segment ${id2}_${id4}`,
       `added segment ${id1}_${id3}`,
-      `added segment ${id3}_${id1}`,
+      `added segment ${id3}_${id2}`,
     ]);
   });
 });

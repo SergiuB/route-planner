@@ -135,6 +135,16 @@ describe('path reducer', () => {
         otherState: 'unchanged',
       });
     });
+
+    it('moves marker somewhere else in the middle of markers array', () => {
+      expect(pathReducer({
+        markers: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }],
+        otherState: 'unchanged',
+      }, actions.changeMarkerIndex(3, 1))).to.deep.equal({
+        markers: [{ id: 1 }, { id: 3 }, { id: 2 }, { id: 4 }],
+        otherState: 'unchanged',
+      });
+    });
   });
 
   it('handles ADD_SEGMENT', () => {

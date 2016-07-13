@@ -5,7 +5,7 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 
 import Map from './Map';
-import MarkerLocation from './MarkerLocation';
+import MarkerList from './MarkerList';
 import SegmentDots from './SegmentDots';
 import createActions from '../redux/actions';
 
@@ -15,6 +15,7 @@ export class RoutePlanner extends Component {
     this.handleMapClick = this.handleMapClick.bind(this);
     this.removeMarker = this.removeMarker.bind(this);
     this.handleMarkerDragEnd = this.handleMarkerDragEnd.bind(this);
+    this.handleMarkerIndexChange = this.handleMarkerIndexChange.bind(this);
   }
 
   async handleMapClick(location) {
@@ -69,6 +70,42 @@ export class RoutePlanner extends Component {
     return Promise.all(segmentUpdates);
   }
 
+  async handleMarkerIndexChange(id, newIndex) {
+    const { markers, dispatch, actions } = this.props;
+
+    const oldIndex = _.findIndex(markers, { id });
+    const markerBeforeOld = markers[oldIndex - 1];
+    const markerAfterOld = markers[oldIndex + 1];
+
+    dispatch(actions.changeMarkerIndex(id, newIndex));
+
+    const markerBefore = markers[newIndex - 1];
+    // this is not a mistake, the marker after is the marker at newIndex, because
+    // the markers array was not changed the changeMarkerIndex
+    const markerAfter = markers[newIndex];
+
+    const segmentAdditions = [];
+    if (markerBeforeOld) {
+      dispatch(actions.removeSegment(`${markerBeforeOld.id}_${id}`));
+    }
+    if (markerAfterOld) {
+      dispatch(actions.removeSegment(`${id}_${markerAfterOld.id}`));
+    }
+    if (markerBefore && markerAfter){
+      dispatch(actions.removeSegment(`${markerBefore.id}_${markerAfter.id}`));
+    }
+    if (markerBeforeOld && markerAfterOld){
+      segmentAdditions.push(dispatch(actions.addSegment(markerBeforeOld.id, markerAfterOld.id)));
+    }
+    if (markerBefore) {
+      segmentAdditions.push(dispatch(actions.addSegment(markerBefore.id, id)));
+    }
+    if (markerAfter) {
+      segmentAdditions.push(dispatch(actions.addSegment(id, markerAfter.id)));
+    }
+    return Promise.all(segmentAdditions);
+  }
+
   render() {
     const { markers, segments, opsInProgress } = this.props;
     return (
@@ -96,17 +133,11 @@ export class RoutePlanner extends Component {
               />
             ))}
           </div>
-          <div className="marker-list">
-            {markers.map(({ id, location, address }) => (
-              <MarkerLocation
-                id={id}
-                key={id}
-                location={location}
-                address={address}
-                onRemove={this.removeMarker}
-              />
-            ))}
-          </div>
+          <MarkerList
+            markers={markers}
+            onMarkerRemove={this.removeMarker}
+            onMarkerChangeIndex={this.handleMarkerIndexChange}
+          />
         </div>
       </div>
     );
