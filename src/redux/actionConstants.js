@@ -1,6 +1,7 @@
 export const ADD_MARKER = 'ADD_MARKER';
 export const REMOVE_MARKER = 'REMOVE_MARKER';
 export const UPDATE_MARKER = 'UPDATE_MARKER';
+export const CHANGE_MARKER_INDEX = 'CHANGE_MARKER_INDEX';
 
 export const ADD_SEGMENT = 'ADD_SEGMENT';
 export const REMOVE_SEGMENT = 'REMOVE_SEGMENT';

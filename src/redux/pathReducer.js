@@ -14,6 +14,8 @@ const initialState = {
 export default function createPathReducer() {
   return function path(state = initialState, action) {
     const { markers, segments, opsInProgress } = state;
+    let markersCopy;
+    let segmentsCopy;
     switch (action.type) {
 
       case types.ADD_MARKER:
@@ -36,12 +38,33 @@ export default function createPathReducer() {
         };
 
       case types.UPDATE_MARKER:
-        const markersCopy = markers.map(m => ({ ...m }));
+        markersCopy = markers.map(m => ({ ...m }));
         const marker = _.find(markersCopy, ({ id }) => id === action.id);
         if (marker) {
           marker.location = action.location;
           marker.address = action.address;
         }
+        return {
+          ...state,
+          markers: markersCopy,
+        };
+
+      case types.CHANGE_MARKER_INDEX:
+        markersCopy = markers.map(m => ({ ...m }));
+        const currentIndex = _.findIndex(markersCopy, ({ id }) => id === action.id);
+        if (currentIndex === -1) {
+          throw new Error('inexistent marker');
+        }
+        if (action.newIndex < 0 || action.newIndex > (markersCopy.length - 1)) {
+          throw new Error('index out of bounds');
+        }
+        if (_.isUndefined(action.newIndex)) {
+          throw new Error('invalid new index');
+        }
+        const markerToMove = markersCopy[currentIndex];
+        markersCopy.splice(currentIndex, 1);
+        markersCopy.splice(action.newIndex, 0, markerToMove);
+
         return {
           ...state,
           markers: markersCopy,
@@ -69,7 +92,7 @@ export default function createPathReducer() {
         };
 
       case types.UPDATE_SEGMENT:
-        const segmentsCopy = segments.map(seg => ({ ...seg }));
+        segmentsCopy = segments.map(seg => ({ ...seg }));
         const segment = _.find(segmentsCopy, ({ id }) => id === action.id);
         if (segment) {
           segment.path = action.path;

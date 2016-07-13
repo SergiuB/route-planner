@@ -80,6 +80,63 @@ describe('path reducer', () => {
     });
   });
 
+  describe('CHANGE_MARKER_INDEX', () => {
+    const pathReducer = createPathReducer();
+
+    it('throws if marker with given id does not exist', () => {
+      expect(() => pathReducer(undefined, actions.changeMarkerIndex(1, 0)))
+        .to.throw(Error, 'inexistent marker');
+    });
+
+    it('throws if new index is negative', () => {
+      expect(() => pathReducer({
+        markers: [{ id: 1 }, { id: 2 }, { id: 3 }],
+      }, actions.changeMarkerIndex(1, -1))).to.throw(Error, 'index out of bounds');
+    });
+
+    it('throws if new index is outside bounds', () => {
+      expect(() => pathReducer({
+        markers: [{ id: 1 }, { id: 2 }, { id: 3 }],
+      }, actions.changeMarkerIndex(1, 3))).to.throw(Error, 'index out of bounds');
+    });
+
+    it('throws if new index is not a number', () => {
+      expect(() => pathReducer({
+        markers: [{ id: 1 }, { id: 2 }, { id: 3 }],
+      }, actions.changeMarkerIndex(1))).to.throw(Error, 'invalid new index');
+    });
+
+    it('moves marker to the first position if new index is 0', () => {
+      expect(pathReducer({
+        markers: [{ id: 1 }, { id: 2 }, { id: 3 }],
+        otherState: 'unchanged',
+      }, actions.changeMarkerIndex(2, 0))).to.deep.equal({
+        markers: [{ id: 2 }, { id: 1 }, { id: 3 }],
+        otherState: 'unchanged',
+      });
+    });
+
+    it('moves marker to the last position if new index is length - 1', () => {
+      expect(pathReducer({
+        markers: [{ id: 1 }, { id: 2 }, { id: 3 }],
+        otherState: 'unchanged',
+      }, actions.changeMarkerIndex(2, 2))).to.deep.equal({
+        markers: [{ id: 1 }, { id: 3 }, { id: 2 }],
+        otherState: 'unchanged',
+      });
+    });
+
+    it('moves marker somewhere else in the middle of markers array', () => {
+      expect(pathReducer({
+        markers: [{ id: 1 }, { id: 2 }, { id: 3 }],
+        otherState: 'unchanged',
+      }, actions.changeMarkerIndex(3, 1))).to.deep.equal({
+        markers: [{ id: 1 }, { id: 3 }, { id: 2 }],
+        otherState: 'unchanged',
+      });
+    });
+  });
+
   it('handles ADD_SEGMENT', () => {
     const pathReducer = createPathReducer();
 

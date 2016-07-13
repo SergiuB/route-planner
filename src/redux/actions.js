@@ -34,6 +34,14 @@ export default function createActions({
     }
   }
 
+  function changeMarkerIndex(id, newIndex) {
+    return {
+      type: Actions.CHANGE_MARKER_INDEX,
+      id,
+      newIndex,
+    }
+  }
+
   function addMarker(id, location) {
     return dispatch => {
       dispatch(operationStarted());
@@ -131,6 +139,7 @@ export default function createActions({
     updateMarkerSync,
     addMarker,
     updateMarker,
+    changeMarkerIndex,
     addSegmentSync,
     removeSegment,
     updateSegmentSync,
