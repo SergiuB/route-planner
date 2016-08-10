@@ -1,13 +1,7 @@
 Route planning web app
 
-To run tests
-
 ```
+npm install
 npm test
-```
-
-To start dev server
-
-```
 npm start
 ```
