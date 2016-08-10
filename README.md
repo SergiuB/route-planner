@@ -12,3 +12,5 @@ Supported features so far:
 * remove waypoints by doubleclick
 * drag waypoints on the map to reposition
 * see distance and cummulated altitude for each segment
+
+Technologies used: React, Redux, Babel, Webpack, Google Javascript API, Mocha, Chai, Enzyme, SinonJS, Material UI.
