@@ -108,16 +108,14 @@ export class RoutePlanner extends Component {
 
   render() {
     const { markers, segments, opsInProgress } = this.props;
+    const path = segments.reduce(
+      (path, segment) => _.concat(path, segment.path), []);
     return (
       <div className="row">
         <div className="col-lg-6">
           <Map
             markers={markers}
-            path={_.reduce(
-                            segments,
-                            (path, segment) => _.concat(path, segment.path),
-                            []
-                       )}
+            path={path}
             onMapClick={this.handleMapClick}
             onMarkerDblClick={this.removeMarker}
             onMarkerDragEnd={this.handleMarkerDragEnd}
