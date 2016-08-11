@@ -15,6 +15,7 @@ const gmapsService = createGmapsService({
 });
 
 app.use(bodyParser.json());
+app.use(express.static('dist'));
 
 app.get('/api/directions', (req, res) => {
   const points = _.values(req.query);//.map(([lat, lng]) => `${lat},${lng}`);
@@ -27,6 +28,6 @@ app.get('/api/directions', (req, res) => {
     });
 });
 
-app.listen(3000, () => {
-  console.log('Example app listening on port 3000!');
+app.listen(8080, () => {
+  console.log('Server listenining on port 8080!');
 });

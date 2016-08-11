@@ -4,7 +4,9 @@
   "private": true,
   "main": "index.jsx",
   "scripts": {
-    "start": "webpack-dev-server --hot --progress --inline --port 8090",
+    "build": "webpack --progress",
+    "start": "node server/app",
+    "dev": "webpack-dev-server --hot --progress --inline --port 8090",
     "test": "mocha --colors src/test-helper.js src/components/test src/redux/test server/services/test",
     "test:watch": "watch-run -i -p 'src/**/*,server/**/*' npm run test"
   },

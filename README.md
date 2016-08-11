@@ -1,10 +1,19 @@
 Route planning web app
 
+Node v6.x is required.
+
 ```
 npm install
-npm test
+npm run build
 npm start
 ```
+Go to ```localhost:8080```.
+
+For development purposes run webpack-dev-server with hot reload:
+```
+npm run dev
+```
+
 Go to ```localhost:8090```.
 
 Supported features so far:
