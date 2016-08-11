@@ -1,25 +1,29 @@
-Route planning web app
+#Route planning web app
 
-Node v6.x is required.
+**Node v6.x required.**
 
-```
+```shell
 npm install
 npm run build
 npm start
 ```
 Go to ```localhost:8080```.
 
-For development purposes run webpack-dev-server with hot reload:
-```
+
+###Dev server
+
+Run webpack-dev-server with hot reload:
+```shell
 npm run dev
 ```
 
 Go to ```localhost:8090```.
 
-Supported features so far:
+###Supported features
 * add waypoints by clicking on the map
 * remove waypoints by doubleclick
 * drag waypoints on the map to reposition
 * see distance and cummulated altitude for each segment
 
-Technologies used: React, Redux, Babel, Webpack, Google Javascript API, Mocha, Chai, Enzyme, SinonJS, Material UI.
+###Technologies
+React, Redux, Babel, Webpack, Google Javascript API, Mocha, Chai, Enzyme, SinonJS, Material UI.
